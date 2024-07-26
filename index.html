@@ -117,7 +117,7 @@
 
         if (accessLevel) {
           sessionStorage.setItem("accessGranted", accessLevel);
-          window.location.href = `/kuli/${accessLevel}.html`;
+          window.location.href = `/${accessLevel}.html`;
         } else {
           alert("Invalid code. Please try again.");
         }
