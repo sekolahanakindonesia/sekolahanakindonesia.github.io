@@ -193,10 +193,10 @@
     <script>
       // Define the access permissions for each page
       const accessPermissions = {
-        "/kuli/sd.html": "sd",
-        "/kuli/smp.html": "smp",
-        "/kuli/sma.html": "sma",
-        "/kuli/tdu.html": "tdu",
+        "/sd.html": "sd",
+        "/smp.html": "smp",
+        "/sma.html": "sma",
+        "/tdu.html": "tdu",
       };
 
       // Get the current page URL and access granted
@@ -205,7 +205,7 @@
 
       // Check if the current page is allowed for the granted access
       if (accessGranted !== accessPermissions[currentPage]) {
-        window.location.href = "/kuli/"; // Redirect to login page
+        window.location.href = "/"; // Redirect to login page
       }
     </script>
 
@@ -317,11 +317,11 @@
           <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('ledger', this.value)" />
         </div>
         <div class="button-container" id="ledger">
-          <a href="/kuli/coming.html" class="button" target="_blank">7A</a>
-          <a href="/kuli/coming.html" class="button" target="_blank">7B</a>
-          <a href="/kuli/coming.html" class="button" target="_blank">8A</a>
-          <a href="/kuli/coming.html" class="button" target="_blank">8B</a>
-          <a href="/kuli/coming.html" class="button" target="_blank">LEDGER SMP</a>
+          <a href="/coming.html" class="button" target="_blank">7A</a>
+          <a href="/coming.html" class="button" target="_blank">7B</a>
+          <a href="/coming.html" class="button" target="_blank">8A</a>
+          <a href="/coming.html" class="button" target="_blank">8B</a>
+          <a href="/coming.html" class="button" target="_blank">LEDGER SMP</a>
 
           <!-- Add more links as needed -->
         </div>
@@ -362,7 +362,7 @@
 
       function logout() {
         sessionStorage.removeItem("accessGranted"); // Clear the access flag
-        window.location.href = "/kuli/"; // Redirect to the base URL
+        window.location.href = "/"; // Redirect to the base URL
       }
 
       function filterButtons(containerId, searchTerm) {
