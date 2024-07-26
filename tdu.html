@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KuLi-TDU</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1500px;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        margin-top: 100px; /* Add margin-top to avoid overlap with datetime section */
+      }
+
+      .box {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        flex: 1;
+        margin: 0 10px;
+        box-sizing: border-box;
+        min-width: 250px;
+      }
+
+      .box h1 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      .button {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #ffffff;
+        background-color: #007bff;
+        text-decoration: none;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+        text-align: center;
+        display: block;
+      }
+
+      .button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .datetime {
+        position: fixed; /* Use fixed positioning */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 90px; /* Adjust height if needed */
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 1000; /* Ensure it's on top */
+      }
+
+      .datetime .date {
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .time-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .time-box {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f1f1;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .separator {
+        font-size: 18px;
+        color: #333;
+      }
+
+      .logout-button {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #dc3545;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 5px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .logout-button:hover {
+        background-color: #c82333;
+        transform: translateY(-2px);
+      }
+
+      .search-container {
+        margin-bottom: 10px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .logout-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 5px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .box {
+          width: 100%;
+          max-width: none;
+          margin: 10px 0; /* Add vertical spacing between boxes */
+        }
+
+        .datetime {
+          height: auto; /* Sesuaikan tinggi berdasarkan konten */
+          padding: 20px; /* Padding yang lebih besar untuk perangkat mobile */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Define the access permissions for each page
+      const accessPermissions = {
+        "/kuli/sd.html": "sd",
+        "/kuli/smp.html": "smp",
+        "/kuli/sma.html": "sma",
+        "/kuli/tdu.html": "tdu",
+      };
+
+      // Get the current page URL and access granted
+      const currentPage = window.location.pathname;
+      const accessGranted = sessionStorage.getItem("accessGranted");
+
+      // Check if the current page is allowed for the granted access
+      if (accessGranted !== accessPermissions[currentPage]) {
+        window.location.href = "/kuli/"; // Redirect to login page
+      }
+    </script>
+
+    <div class="datetime" id="datetime">
+      <div class="date" id="date"></div>
+      <div class="time-container">
+        <div id="hour" class="time-box"></div>
+        <span class="separator">:</span>
+        <div id="minute" class="time-box"></div>
+        <span class="separator">:</span>
+        <div id="second" class="time-box"></div>
+        <button class="logout-button" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- GSheet Penilaian Section -->
+      <div class="box">
+        <h1>GSheet Penilaian</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('penilaian', this.value)" />
+        </div>
+        <div class="button-container" id="penilaian">
+          <a href="https://docs.google.com/spreadsheets/d/1Cc_HFjxZuZUz9VadyEsjjOYVkJRK4VSuGsOv7pu64Ik/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1XWrtFV3kBMPnNvW0KRdigl9Chg-QzK_1aJBqh_bRgCc/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/16NdRhGnnG6hgyUNM6rvNngby5CQmTN8cZ8DmQ2X2xk4/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FSJVCjfif208Hk6yCjl0RmJMcIDn70JE-yj97D-SPc8/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS ENGLISH CLUB_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1mv1gPGvDlsEpvsUhV-7ri3haEPbJKHiwe_N6Lc7GsJQ/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1wpaZ3x0pTK-gs2TLKpQWEnPyqnoldUOjcmj90Z9OG5c/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1jWPadFR_Nn_MH_RQYJpLpoQ8g4ogZt8MS29wz_AJd0s/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN ALAM_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1TWziwopPDjxTjam0bf0k-SwYPzI5KeQHHm97TpjqUb4/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/18U-Yxl4_7TxaGnkGAWZd6XLs0uliS2Kmo2LwYnN26C8/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1UBtnfoXChX52_pYK9Rqw3NOmlejnyHYXqv3u4NOAR1M/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Kv_kbdA151AFOvxfaN8bBy9wJrq6S9WcIlbUwdfxoQw/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/179f8YliBVIfpT7oXfBU-bliipL7sfZYZusC1m2YArUQ/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yhkqzy4oFurbVuxE8ap4iW4_6RJEJ-EOm4AbzXmPawU/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_4A_SD</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1GNjEyOLhgochzYLsUZ4RlV3sVXNAJZAr1EqlPt5z57U/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1wa0-dEZqTAw_bmG-fQF9t3uQ2bjw9JWzHZnRX8FTAlM/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1YBSnF9b12PuqDcTlVInIdwhMtFsMkgviykmUnlMSR7w/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1c8Nn2XgCwuPvA-gNDKEt6E8v3cRol_ylMpRIM6_15eQ/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS ENGLISH CLUB_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1rdxzIRplxmxLHb0QBDnYsr8u4pcqmhSik8LpyaJS1F0/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1CVZK9MYPVuutE6OOFquXPNwwQsCxiciwMZewIa0x8x0/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1tY2vejMW_zC6N174au6Ii9P3bZWuq-7uWeBHQagbKv0/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN ALAM_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1S6WYKpur-sx8_iCqGPIgNP70OHE81KsICsf5nYA3qYY/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1IfmH1Fbksm5Xtn9jUSGnmoxNYOuIp5tl3L_ImUgoJKk/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1E7na032R0S_km2KHFpALsOA1LqB5HfWa0Xs8Np43OYY/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1mGBj5VlqUKgXwaV8gIhleonXD70fAyINY9hUMnvRklA/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1lKPj_4iXYuP8mAd5fPGi6e4uTW0xiq9SLQQ7FNXljws/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1P6-D0idsvrATO6uLdcYQudQEbhW2FrECRrWbxv_omD4/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_5A_SD</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1bk8R5AC8CAgT_8cAMJE407-lye81HlmMCeglyahvoTU/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1hXfa6aJu0i3-Q9kJgL5kn_IpYVhDZ7kgSNSfCNSGOyY/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yhjRT3mDII9QekoKsiglaHqVKqc4XiHOggmcn5CpgyI/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1h6ARTT1k2vDzwQnrUfPIb_884D4TgzxZOFUBi2gBVcs/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS ENGLISH CLUB_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/11fu9WczW8xzx1HuptWatghP2LWa5LJgUbWuxc8fr5I4/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1nuB6YxQ_AMNuByl0pbZNd6xXYEpcpOLOlaQ09rijmRw/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Ot_fUnWuKygo49moJXIMmahRd8X7vCTyoxmo1g2TlMw/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN ALAM_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1utEAyCuG9eZmlw2TqcL1d9VFgSKUTHzyAc07o4_ddEQ/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1rmf_xYdKptE--R6mQaccrdcpvyjxoWa6LMOvU-zMlWE/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/14r5H6ivILFZn49Cjal22eYU3OeJJ16tgLJZK7G-c_V4/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1RO6Z9-LHkANdwR862Xdz3n93Qjqajo2YvemKEvwRo9A/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1HLq6FjjgNmCaEiBLTu_ZxRSHh7d4MTDcMncPnFsa_fY/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1OBd0i6yEXuN-z00siR1kR3TXJTmY35jrXuAj9pYNWEo/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_5B_SD</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1volmPI8ktRq28qc54bpdOtbicg79aOGp-S0mzrHVoXc/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1gj3yVClGFWnD_9puHXDwl0-VhceEOtoM7Kxw3gLkVc4/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1k4nnN_3dsaDr8x11MWDpC3kdFrDBTtNFI3Y3Nf0Wt6Y/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1IpleIocIGq6Q2mHtyXC4IAeaaJCpxAsoCNWrl_A863Y/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1YheyQewKBMHzN2FY5ebpdtXP1f7gmUBN0cL4BrkGPHQ/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ZcPygPeBNREKT9guiuciObh1DDId3Rgxn1lD3qLWtHA/edit?usp=sharing" class="button" target="_blank">BIOLOGI_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/18S-B5JJn0hkfdOkP_kO3ncEmx43c6mrwXTZeitfKr_c/edit?usp=sharing" class="button" target="_blank">FISIKA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zzA1LvS-KjBZ-ELYL_88XE7OUCc1jAupxxJtK2tUE_4/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1E_iowElgut5y5RHDn0mys0YIZbvVziQGcb0_zpLCUQI/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Q3WbpMZYVHTm7N4NE37sIO79ZZMOP8CQX5zhz5fU5xY/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1LJ8GBin4e_SVoxoS39H8It7Pz05baXf4OMsKZFxHue0/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1VEKTxfssgQYDvRYPGQYTxftM6LLckJeRoDFoEdQx37o/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1AwYDyIQEC-DBYzrlHpzsfUoWpk4zzjeLFC8ux3Nh_Jk/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ATTOLvtQajVQJBluCSCdpz88K7iAckdzdcUESPeQb84/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_7A_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/14eYywubZZCRBos0UuksZaagdlamtmnT86zh2BJovZjA/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yAbNLI8_b3xjW3Urw86JmYtVJWg9tNMStZxHhBcrnzc/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/18OiDUU8UyZozdAPOnsug0UKMNcq-6UcmUFJ7NzVI3tU/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1lNXSO2lVIBP2iSwm6xwpIaVRYfYwVIMeH4IuBs0RNoc/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1qICrS4CJkkMsXilrAuxhjiIqMI5a22Dv-5PSQ8jJ-Ao/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Ps4K3gImNmvFUvdyyX-UIhU_K381zNT8S3mDoBr5iv0/edit?usp=sharing" class="button" target="_blank">BIOLOGI_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FuyQkadV9ecbZmfIjfRXMJXeB4UGL-UkUfYadRTxnys/edit?usp=sharing" class="button" target="_blank">FISIKA_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/13oVELe_A_ZQ2vXq_PhdzNGhHEZ8qWXZge0Wjbi8X8Yc/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1nIlCcS8EYxRgw_25AgbrQx_KwajADd02H2kOJAQG8xM/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1QPGc6kml8YqJvPAtYjeE47rLFsFqAuAOSboAY08l1_I/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1itjWrxe5Ni3B7d2bWiCu0UoCffxmmPqkHlVbRw6lGEY/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1IotEzR0_5KM5IrJfQjp0nUfjQL6B5TEVw-lNF1K509U/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1LccZf7E2BYaDQzLDA7yzoM5ADe0HSeknIpy2kh7HNys/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/117e_SVQH_DWsSAxoijTZFTgfljqFzxlq_UYgK12_nQU/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_7B_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1tAqiIp98_9smxLjJJHKBzaDbg63MtcVKr6jAr66O08A/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1WhN0bVFKlx271y1OvRj9mYvcpgtyR789gVXbK5HPmro/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1RFf2OZJ5MqF4mRQOr-EvppAkBtgQyKPhVmJEQmic1sg/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1xiHQU6ldXk0NRcPGJ1kWHJCFammq5bwWovjZzbkcSWw/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/12m0dkSVavqc2qo-FpfJ6l0Q6PlONI2j6UwsQTLktOsE/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Aks99T5VE0ckUKcvQRLufILb2W5YoLi2Ucc8QmWaRWM/edit?usp=sharing" class="button" target="_blank">BIOLOGI_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1cYo80gvWufa61i4UaiLeTFn7N9QvJqifmN8vRS-OpvE/edit?usp=sharing" class="button" target="_blank">FISIKA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yLgTadENUQrTif0vYVyUVkrS82YNUa8oeuRUfb3VMMM/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ac5eWmQVvuMiQ5V9rMQZvmjkMJYNcQimhY5hXe5GhIk/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ykjKtMYIcVmJhsGS1GfPOEMcvOzve7DScTG1CKDEr5k/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1qkibhzeLeRR_qyVfZKplJMQfuRx-NBLTXb-JJxhUx04/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1InDYWnpTW0fLi97umgJufvy6BGMjApKeCQcofXH3ovQ/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-FsvLRfqhbepjpyCR5SBd2CbX5Q27uYTiEgfnNyI3Bo/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1hNmNcUdcfElrAVP95FzOZjKkCiCbeW7ZlKtmcgmK7W4/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_8A_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1CIQm1yrMV4Ew5H-oZvCCZLEwxAzNE8nD4q4SITpzC9Q/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Wj6kl2PeVt7auMXHYwC0xFlsKIpRwTcQk4vPisX3cmY/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FKfU90wkn-OhQmIxlhG2MqW6Oj7UsIIFkBNIdwseVfs/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1BfygwPhVZGsZJ7GH30AF_NNLnhA7rzt0oMQHYpcG9HY/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/160gTZuC_LUaPa6pB8WbyRYAvb5yrMVPnWVZ-iR3ENvE/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ntvogI-CC_7bXtZa6iXBQ8t6Tv9b39Yqr3WPBjySu30/edit?usp=sharing" class="button" target="_blank">BIOLOGI_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1lKRVyKCB99dpjh7-WB6nzZl38aDFwdVOvHjfk-eqU2E/edit?usp=sharing" class="button" target="_blank">FISIKA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/16FoczDcUCh-c56W-w1QHanjI4HDzXnBBKIT0jybtOs4/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zJcfzzM4g-N0OctAmaqV-P_qiSohBvF6gLhvTIqSFl4/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-_W_2WwMrdDN-0kVyHyn8utmDZeFL0iaXr_xxKTjHKs/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ejU7teczvJYqFeN9dDom4HoLwDOXenpNIsTn5jMVzxw/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1V7wmepCxEomMbLIYgyxi1DaTe9t3GKME9B19n16qCRw/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1wJApVL476jtCBZ3eGEOXTfdjHhjKmhWLlMGPcmCOQ6s/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1aBg_HIY7prBO8pZBVPJdr7TywTtCx7_U8KM9KSGESp4/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_8B_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1i5CKHFc4iR8_xA8ICln-yn8DiuAlVRYU35r3u8u7bcY/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/17iMvytd5jPbMYmMc0Py4ggvn0xQ_5DFtlLVDPrM8SsQ/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Q-3E1B193zvQkgZ6k0zKcupJq_JrP_XxON3zhedw4r4/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1YO0KIa8yGfx7HyjgHAzAn0-TWx3CW2e7n3RV2aiacjk/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FZA2niMMyZAFhz9RVYoAIz35xxStdLpiYTJpVLPvskg/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1c0-AcRei5LNGkrLVJ2IC_9aliCRHBTfEswarkSGt0_U/edit?usp=sharing" class="button" target="_blank">BIOLOGI_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/13CLMru5Xg0GvIi_dXT5f2EPN7GY1RHaVWu6ufNTfASs/edit?usp=sharing" class="button" target="_blank">FISIKA_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1AuajGJOH09noTWXfE-p1wPS_qUTni2AcpRxXSgjaCoo/edit?usp=sharing" class="button" target="_blank">GEOGRAFI_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-ooBA8SAlWEpGHosAZpaNu7FMpHd2DGGOVNU_Jz-uwU/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1V58VLMPjI-R3ghk5ivzRIyvLysTZcEVq-cl9QW-EPTU/edit?usp=sharing" class="button" target="_blank">KIMIA_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1IlwfgQZWWtD9Ezrfx_M8UcEuLs_7yJ7lB-fZ_T2_3AE/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1jMZ3yumuxG6ZGZlrzFt_Gc97m8g4PIqRUdB-jmQTtUk/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1go_WRv0pPXreaFoB0b-wgmghNhqj_TzUk9PoD2T7UuA/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Lwhyly2QRbIGywwFwA_Eie2epfmb8A0QFS4C8-sW98g/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1pa5_N12Rh7bThwiM1BmNC4jm0fFBGdZnHxutEOm4EY4/edit?usp=sharing" class="button" target="_blank">SEJARAH_10A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1BQUTpuuwhXYU0e8ud0rOyngwUsyhQV7x2MGJHFwodEo/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_10A_SMA</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1geDdGa4fV24bAT8UjFyn53fDJ37NG1fY7kwpQ-wceq4/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1YfrtJyvxYwVTV4B_nUW0-5XoUEZGys1aAzZ5ylz6c6c/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1MrCZFkI3fS-bIAUCLX-B6xqVT_GLn6MduyzriH5laFA/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/18kXsbxvycnaMgYzGhTsAFGkohAaNQsz_ymPmKg6Vnds/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1lG8srD0mbqENo-YcW8VY_AipBpzVJYyhDHoiOlFQc8g/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1US2TqZQHUwB24-rDFAxwSrUL1tJ_ExQB8gjYVCye78I/edit?usp=sharing" class="button" target="_blank">BIOLOGI_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Vm6Mt0doNFucvC2jwZrTDHiMLZO5rCa4U-C60uS8Q5Y/edit?usp=sharing" class="button" target="_blank">FISIKA_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1VCMCXNuKO2_EKMnxUvL-WEec48srKi9T6E3oNh-Czfs/edit?usp=sharing" class="button" target="_blank">GEOGRAFI_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1NJJ2-ddoF1_-8dO-oq0eVnInMNUAUN6d-HHll6Jtlr4/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1hdjGuABsuG34YGl-4jJfGNkHBuwOdnRJM66HdZNG4to/edit?usp=sharing" class="button" target="_blank">KIMIA_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1HU0IuaNfjefrRnAkazHITniCmD4HCh3XpR5v2PI5RXA/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/19yONQL4CWM1tsyw8vqcEFN8eyFeY5pKOMejbJisB5jY/edit?usp=sharing" class="button" target="_blank">MATEMATIKA TINGKAT LANJUT_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1u2vWx_eLBdxOEM5qZ0hDYU1rwFx0Nxklktb4miyJvaQ/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1oOtiW5cXCFm6gdYSHdm9G-u3GuSYhmWt8m1r87UB1Vg/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1W-8QSCqxcEBO-Ok1yoGxkxBBQcZFTxgoJegmYgi_e70/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1pIvTBTLklhiBrhGDSg4hRug2Rj51DKodyov26EPGo74/edit?usp=sharing" class="button" target="_blank">SEJARAH_11A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1eWgUxI4-b7Em-N8WnRIAR9fAhAzJij4wTMdJlfcPHe0/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_11A_SMA</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1Eaq2Y_xjEj7sSA1--BEW1TSx-tFMDDD8jSXOeoB-thQ/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/18BObY0pDJmSxlKoX46Akyekg84Fgb29vQ5jXP22r3QA/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1agAfvkIk_zY4HHVppOtUIB2sLhAcM9zDAbMCgpEZqGw/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zfwR6Ut3Wxo0D8Gr9bWukStHM1PvbjB4IxJktTj3wbA/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/105becQsqvQ7a3Zd1vSG-rTYN6eUxT_1QqGD0TmhH5aQ/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1csPNZNU-UwgZMUoDja2PRHNo7r87vH8g7eg9sL8EM_0/edit?usp=sharing" class="button" target="_blank">BIOLOGI_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1qbyPbzB3vdhQJ-bFclkiLnDxxUQgICl3H6X_hc4bbCc/edit?usp=sharing" class="button" target="_blank">FISIKA_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1oN3NRnnWBNZB2CLnwlcbxTVmI1MOds-aJDZJwDaWIgY/edit?usp=sharing" class="button" target="_blank">GEOGRAFI_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1_QyHQniheri1sGm09Id7-9tbvxsGxSyEL8prgWUN2kM/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1lGCUWNA1HPp4ohF54jbCcMe4g-aqyFsQDgNJsarVyos/edit?usp=sharing" class="button" target="_blank">KIMIA_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/14Hzzk54vJdLw-FBry6erzCSZ23wdDlER71AIkr1IpgI/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1OIfzuvcfMRy9KKOr4qZrL3vTOU0kOPAqT2iYAS-k0Og/edit?usp=sharing" class="button" target="_blank">MATEMATIKA TINGKAT LANJUT_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1nlcMpQmygk0_NdaIMh3oJaF1Iq03HnBY4kUhilhTDes/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1bvfLdRqtpiQO11tRmpfATmEt30avZsm3AikXpRcsIB0/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1aa6GcEhHRsV9rUHwetszTtFWeH6QJZSz4ctmE-nDCQw/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ofNtGKi0of2Mq7xIQ-UPkWC8WKGx_qo949qr1a2vVEw/edit?usp=sharing" class="button" target="_blank">SEJARAH_12A_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1t9d91Q_lXBbaNjn-rdzo3UMxMk2Cq9tC3usNe-9jenE/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_12A_SMA</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/16OF4a18t1a3xSjUSf-K68s4y0t85TMrQBnri_HBmplo/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/16_bJ4ivb7-DHVDAjcZGvst0YDdk9bL1xu8TnQwIzcrE/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1JISPhSz8iHcVfflq3W47yLTkOGQrFmp3B9vPm-4b2ZM/edit?usp=sharing" class="button" target="_blank">AGROTEK_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1sZ2ZQ1ieAaW79G8lpFOsJ2L3gd3NKzjBPSG8D92aiAs/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/16h_j47d5Y6VVJBoKnQK-C4VJBOwhjch6h0-5ROr2X_k/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1nDhCtkKEZ8VgoIbqL1-BFt4CpHDFXKWx3WLXUL7khoE/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1BraVcvNcNUXSv2G_aPCu7Kzomo9zTlao7g57Zvu-64w/edit?usp=sharing" class="button" target="_blank">KOMUNITAS_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/130B0RYJRh-o8XzjefFn7r8PhaD8qSoY1-37z-iV1Jco/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_11B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1M6JjHjOdBmbKutEYpSJqq-kH_0Oj_DJiN94WwDxCzNs/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_11B_SMA</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1U1CnuDatLLZzoyCHC99LKwad4qAKa9HTkS2AGjDFXio/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1muMbz_LWuSbaYaCfQdasVbiLNASQRbpzn2650bKnvNM/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1j_zZYVkmx8hBfKSAS1nekWUtuDj-NhuJkLBWchaSsSA/edit?usp=sharing" class="button" target="_blank">AGROTEK_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Q2rSuo307qNTEQdHacPJ2I-plQy0xdtN5xem5ujHvis/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yB0P1-vMCou78sX4yx09NUq90e4sMtOT7YQoDRbJuYc/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1YaqTBfzmfkBA93V_6_M1Ze7V_aZKoIcHcZbe-8-AOw8/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-ZhHZiPbWbeks1GNHxuimo27-vLqkPSJ3D35sAevojo/edit?usp=sharing" class="button" target="_blank">KOMUNITAS_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1MMz48FtSCaqZrzeV_vpvR2PRJLk2WvyWvY5tZ0w02sM/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_12B_SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1dlgVrwWN9muAggWqECm-79GMlSkCV5Loy8PqOD0y8yE/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_12B_SMA</a>
+
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Absensi Section -->
+      <div class="box">
+        <h1>Absensi</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('absensi', this.value)" />
+        </div>
+        <div class="button-container" id="absensi">
+          <a href="https://docs.google.com/spreadsheets/d/1DHK7h7e433g4lvAX3kLJjxG5wZHqXNfNg3K-lvwC7B4/edit?usp=sharing" class="button" target="_blank">ABSENSI_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zbovvnchVi9lEbFu7K5OCQvnTH715WAcTS829hWt4fo/edit?usp=sharing" class="button" target="_blank">ABSENSI_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1F58Pv3TeTALzBgiYmfj-YV3QWOUSE6jWGMIuvWadZu4/edit?usp=sharing" class="button" target="_blank">ABSENSI_5B_SD</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1phXCd7XA0A9w3xMUpp5aMJigSYPeROlzSdlmSFWYjGI/edit?usp=sharing" class="button" target="_blank">ABSENSI_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1KzIlJj6W2mIYPWUeBDIiRzRvIrdmDO0C5WlYKOIxYOQ/edit?usp=sharing" class="button" target="_blank">ABSENSI_7B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1iw_Ww9K5SQIalubEBMHPdSl7DKxvuNZuCxjoNMBsvGY/edit?usp=sharing" class="button" target="_blank">ABSENSI_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1dSa-fvDBU331XGtyNDAFoQv83mD7biPXLigVYUhV3kA/edit?usp=sharing" class="button" target="_blank">ABSENSI_8B_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1HRS5QpZo5dGfNXznCxwZYdZGUolecAy2KUYKVcvxp1w/edit?usp=sharing" class="button" target="_blank">ABSENSI 10A SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1IL4-QXtefK9yUJWOkU8gTTuD7qGM7XOx8yI447vAn3g/edit?usp=sharing" class="button" target="_blank">ABSENSI 11A SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1XmkiWh9PKl78XALl-rBOFGfgGa2GfGXY2A3f7ZO33cI/edit?usp=sharing" class="button" target="_blank">ABSENSI 11B SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Wdo51okcY4LfhtpTMy4A2eO2zAVtXYroVZ1q3z4Cb2Q/edit?usp=sharing" class="button" target="_blank">ABSENSI 12A SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Z2XWLYtUKpYnp74SEvFxycFhhuvtejYNkXdEb-z_MuA/edit?usp=sharing" class="button" target="_blank">ABSENSI 12B SMA</a>
+
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Ledger Section -->
+      <div class="box">
+        <h1>Ledger</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('ledger', this.value)" />
+        </div>
+        <div class="button-container" id="ledger">
+          <a href="/kuli/coming.html" class="button" target="_blank">4A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">5A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">5B</a>
+
+          <a href="/kuli/coming.html" class="button" target="_blank">7A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">7B</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">8A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">8B</a>
+
+          <a href="/kuli/coming.html" class="button" target="_blank">10A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">11A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">11B</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">12A</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">12B</a>
+
+          <a href="/kuli/coming.html" class="button" target="_blank">LEDGER SD</a>
+          <a href="/kuli/coming.html" class="button" target="_blank">LEDGER SMP</a>
+          <a href="/kuli/coming.html" class="button">LEDGER SMA</a>
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Data Master Section -->
+      <div class="box">
+        <h1>Data Master</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('dataMaster', this.value)" />
+        </div>
+        <div class="button-container" id="dataMaster">
+          <a href="https://docs.google.com/spreadsheets/d/1nJ7X8Eji_VseetLNxwmMwlJ1DzQsvT7AhzD_9II_Fzs/edit?usp=sharing" class="button" target="_blank">MASTER SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1k5q9HYnrYcMp7bfXhLkpQja-l7sT9ZUrb_PgnxFIAKI/edit?usp=sharing" class="button" target="_blank">MASTER SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1UlCTy2Kcn0gM4JhwEUt9uJ2_NLriqZHcH-eLhi17tCE/edit?usp=sharing" class="button" target="_blank">MASTER SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/10Y5v_GykZOe9SPEkAJD-R8NZEozDuZeg4X264jq4Rz4/edit?usp=sharing" class="button" target="_blank">MASTER SMA PMD</a>
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function updateDateTime() {
+        const now = new Date();
+        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+        const dayName = days[now.getDay()];
+        const monthName = months[now.getMonth()];
+        const day = now.getDate();
+        const year = now.getFullYear();
+        const hour = String(now.getHours()).padStart(2, "0");
+        const minute = String(now.getMinutes()).padStart(2, "0");
+        const second = String(now.getSeconds()).padStart(2, "0");
+
+        document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
+        document.getElementById("hour").textContent = hour;
+        document.getElementById("minute").textContent = minute;
+        document.getElementById("second").textContent = second;
+      }
+
+      function logout() {
+        sessionStorage.removeItem("accessGranted"); // Clear the access flag
+        window.location.href = "/kuli/"; // Redirect to the base URL
+      }
+
+      function filterButtons(containerId, searchTerm) {
+        const container = document.getElementById(containerId);
+        const buttons = container.getElementsByClassName("button");
+        for (let button of buttons) {
+          if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+            button.style.display = "block";
+          } else {
+            button.style.display = "none";
+          }
+        }
+      }
+
+      // Disable right-click context menu
+      document.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "u") {
+          event.preventDefault();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
+        if (event.ctrlKey && event.shiftKey && event.key === "I") {
+          event.preventDefault();
+        }
+
+        // Prevent F12 (DevTools)
+        if (event.key === "F12") {
+          event.preventDefault();
+        }
+      });
+
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+    </script>
+  </body>
+</html>

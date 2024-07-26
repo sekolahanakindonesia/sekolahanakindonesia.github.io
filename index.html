@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KuLi-Login</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f3f4f6;
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .login-container {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        box-sizing: border-box; /* Ensure padding and border are included in width */
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: calc(100% - 22px);
+        margin-bottom: 10px; /* Reduced margin to align better with the button */
+        box-sizing: border-box; /* Ensure padding and border are included in width */
+      }
+
+      button {
+        padding: 10px;
+        font-size: 16px;
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: calc(100% - 22px); /* Ensure button width matches the input */
+        box-sizing: border-box; /* Ensure padding and border are included in width */
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 20px;
+        }
+
+        .login-container {
+          padding: 15px;
+        }
+
+        input[type="text"],
+        button {
+          padding: 8px;
+          font-size: 14px;
+        }
+
+        h1 {
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 400px) {
+        input[type="text"],
+        button {
+          padding: 6px;
+          font-size: 12px;
+        }
+
+        h1 {
+          font-size: 18px;
+          margin-bottom: 15px;
+        }
+
+        .login-container {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Enter Access Code</h1>
+      <input type="text" id="access-code" placeholder="Enter code" />
+      <button onclick="checkCode()">Submit</button>
+    </div>
+
+    <script>
+      function checkCode() {
+        const accessCode = document.getElementById("access-code").value;
+        const codes = {
+          klsd: "sd",
+          klsmp: "smp",
+          klsma: "sma",
+          kltdu: "tdu",
+        };
+
+        const accessLevel = codes[accessCode];
+
+        if (accessLevel) {
+          sessionStorage.setItem("accessGranted", accessLevel);
+          window.location.href = `/kuli/${accessLevel}.html`;
+        } else {
+          alert("Invalid code. Please try again.");
+        }
+      }
+
+      // Disable right-click context menu and specific key combinations
+      document.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "u") {
+          event.preventDefault();
+        }
+
+        if (event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "J")) {
+          event.preventDefault();
+        }
+
+        if (event.key === "F12") {
+          event.preventDefault();
+        }
+      });
+    </script>
+  </body>
+</html>
