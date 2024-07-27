@@ -1,5 +1,5 @@
 // Enkripsi data
-const encryptedPermissions = CryptoJS.AES.encrypt(
+const codes = CryptoJS.AES.encrypt(
   JSON.stringify({
     "/kuli/sd.html": "sd",
     "/kuli/smp.html": "smp",
@@ -9,10 +9,10 @@ const encryptedPermissions = CryptoJS.AES.encrypt(
   'your-secret-key'
 ).toString();
 
-console.log("Encrypted Permissions:", encryptedPermissions);
+console.log("Encrypted Permissions:", codes);
 
 // Dekripsi data
-const bytes = CryptoJS.AES.decrypt(encryptedPermissions, 'your-secret-key');
+const bytes = CryptoJS.AES.decrypt(codes, 'your-secret-key');
 const accessPermissions = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
 console.log("Decrypted Permissions:", accessPermissions);
