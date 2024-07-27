@@ -107,9 +107,9 @@
     <script>
       function checkCode() {
         const accessCode = document.getElementById("access-code").value;
-        console.log(encryptedPermissions);
+        console.log(codes);
 
-        const accessLevel = encryptedPermissions[accessCode];
+        const accessLevel = codes[accessCode];
 
         if (accessLevel) {
           sessionStorage.setItem("accessGranted", accessLevel);
