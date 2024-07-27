@@ -102,14 +102,14 @@
       <input type="text" id="access-code" placeholder="Enter code" />
       <button onclick="checkCode()">Submit</button>
     </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="permissions.js"></script>
     <script>
       function checkCode() {
         const accessCode = document.getElementById("access-code").value;
-        console.log(codes);
+        console.log(encryptedPermissions);
 
-        const accessLevel = codes[accessCode];
+        const accessLevel = encryptedPermissions[accessCode];
 
         if (accessLevel) {
           sessionStorage.setItem("accessGranted", accessLevel);
