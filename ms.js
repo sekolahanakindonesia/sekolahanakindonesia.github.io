@@ -17,6 +17,7 @@ const bode = {
   dlsmp92: "smp",
   dlsma83: "sma",
   dltdu74: "tdu",
+  rizal:"rizal",
 };
 
 const passwords = {
