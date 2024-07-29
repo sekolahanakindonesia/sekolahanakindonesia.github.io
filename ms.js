@@ -87,7 +87,7 @@ const codes = {
   klsmp29: "smp",
   klsma38: "sma",
   kltdu47: "tdu",
-  rizal:"rizal",
+  rizal: "rizal",
 };
 
 const cod = {
