@@ -105,9 +105,9 @@
 
     <script src="ms.js"></script>
     <script>
+      // Function to check the access code
       function checkCode() {
         const accessCode = document.getElementById("access-code").value;
-        console.log(codes);
 
         const accessLevel = codes[accessCode];
 
@@ -118,6 +118,13 @@
           alert("Invalid code. Please try again.");
         }
       }
+
+      // Trigger the checkCode function when "Enter" key is pressed
+      document.getElementById("access-code").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          checkCode();
+        }
+      });
 
       // Disable right-click context menu and specific key combinations
       document.addEventListener("contextmenu", function (event) {
