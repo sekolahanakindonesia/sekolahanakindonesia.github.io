@@ -31,14 +31,31 @@
         color: #333;
       }
 
+      .input-container {
+        position: relative;
+        width: calc(100% - 22px); /* Adjusted width to match the container */
+        margin-bottom: 10px;
+      }
+
+      input[type="password"],
       input[type="text"] {
         padding: 10px;
         font-size: 16px;
         border: 1px solid #ddd;
         border-radius: 5px;
-        width: calc(100% - 22px);
-        margin-bottom: 10px; /* Reduced margin to align better with the button */
+        width: 100%;
         box-sizing: border-box; /* Ensure padding and border are included in width */
+      }
+
+      .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        background: none;
+        border: none;
+        font-size: 16px;
       }
 
       button {
@@ -99,7 +116,10 @@
   <body>
     <div class="login-container">
       <h1>Enter Access Code</h1>
-      <input type="text" id="access-code" placeholder="Enter code" />
+      <div class="input-container">
+        <input type="password" id="access-code" placeholder="Enter code" />
+        <button class="toggle-password" onclick="togglePassword()">👁</button>
+      </div>
       <button onclick="checkCode()">Submit</button>
     </div>
 
@@ -116,6 +136,20 @@
           window.location.href = `/${accessLevel}.html`;
         } else {
           alert("Invalid code. Please try again.");
+        }
+      }
+
+      // Function to toggle the visibility of the password
+      function togglePassword() {
+        const passwordField = document.getElementById("access-code");
+        const toggleButton = document.querySelector(".toggle-password");
+
+        if (passwordField.type === "password") {
+          passwordField.type = "text";
+          toggleButton.textContent = "🙈"; // Change icon to closed eye
+        } else {
+          passwordField.type = "password";
+          toggleButton.textContent = "👁"; // Change icon to open eye
         }
       }
 
