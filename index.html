@@ -1,149 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KuLi-Login</title>
-    <style>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #f3f4f6;
-        margin: 0;
-        font-family: "Poppins", sans-serif;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KuLi-Login</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f3f4f6;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+    }
 
+    .login-container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin-bottom: 25px;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .input-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .input-container input {
+      width: 100%;
+      padding: 12px 40px 12px 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .input-container input:focus {
+      border-color: #007bff;
+    }
+
+    .input-container .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input-container .toggle-password svg {
+      width: 24px;
+      height: 24px;
+      fill: #888;
+      transition: fill 0.3s;
+    }
+
+    .input-container .toggle-password:hover svg {
+      fill: #0056b3;
+    }
+
+    button.submit-button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      color: #ffffff;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button.submit-button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 600px) {
       .login-container {
-        background: #ffffff;
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        max-width: 400px;
-        width: 100%;
-        box-sizing: border-box; /* Ensure padding and border are included in width */
       }
 
       h1 {
+        font-size: 22px;
         margin-bottom: 20px;
-        color: #333;
       }
 
-      input[type="text"] {
+      .input-container input {
+        padding: 10px 40px 10px 10px;
+        font-size: 14px;
+      }
+
+      button.submit-button {
         padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        width: calc(100% - 22px);
-        margin-bottom: 10px; /* Reduced margin to align better with the button */
-        box-sizing: border-box; /* Ensure padding and border are included in width */
+        font-size: 14px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .login-container {
+        padding: 15px;
       }
 
-      button {
-        padding: 10px;
-        font-size: 16px;
-        color: #ffffff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        width: calc(100% - 22px); /* Ensure button width matches the input */
-        box-sizing: border-box; /* Ensure padding and border are included in width */
+      h1 {
+        font-size: 20px;
+        margin-bottom: 15px;
       }
 
-      button:hover {
-        background-color: #0056b3;
+      .input-container input {
+        padding: 8px 35px 8px 8px;
+        font-size: 12px;
       }
 
-      @media (max-width: 600px) {
-        body {
-          padding: 20px;
-        }
-
-        .login-container {
-          padding: 15px;
-        }
-
-        input[type="text"],
-        button {
-          padding: 8px;
-          font-size: 14px;
-        }
-
-        h1 {
-          font-size: 20px;
-        }
+      button.submit-button {
+        padding: 8px;
+        font-size: 12px;
       }
-
-      @media (max-width: 400px) {
-        input[type="text"],
-        button {
-          padding: 6px;
-          font-size: 12px;
-        }
-
-        h1 {
-          font-size: 18px;
-          margin-bottom: 15px;
-        }
-
-        .login-container {
-          padding: 10px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="login-container">
-      <h1>Enter Access Code</h1>
-      <input type="text" id="access-code" placeholder="Enter code" />
-      <button onclick="checkCode()">Submit</button>
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Enter Access Code</h1>
+    <div class="input-container">
+      <input type="password" id="access-code" placeholder="Enter code" />
+      <button type="button" class="toggle-password" onclick="togglePassword()">
+        <svg id="eye-icon" viewBox="0 0 24 24">
+          <path d="M12 5c-7.633 0-11 6.274-11 7s3.367 7 11 7 11-6.274 11-7-3.367-7-11-7zm0 12c-4.149 0-7-3.281-7-5s2.851-5 7-5 7 3.281 7 5-2.851 5-7 5zm0-8c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zm0 4.5c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>
+        </svg>
+      </button>
     </div>
+    <button class="submit-button" onclick="checkCode()">Submit</button>
+  </div>
 
-    <script src="ms.js"></script>
-    <script>
-      // Function to check the access code
-      function checkCode() {
-        const accessCode = document.getElementById("access-code").value;
+  <script src="ms.js"></script>
+  <script>
+    // Function to check the access code
+    function checkCode() {
+      const accessCode = document.getElementById("access-code").value.trim();
 
-        const accessLevel = codes[accessCode];
+      const accessLevel = codes[accessCode];
 
-        if (accessLevel) {
-          sessionStorage.setItem("accessGranted", accessLevel);
-          window.location.href = `/${accessLevel}.html`;
-        } else {
-          alert("Invalid code. Please try again.");
-        }
+      if (accessLevel) {
+        sessionStorage.setItem("accessGranted", accessLevel);
+        window.location.href = `/${accessLevel}.html`;
+      } else {
+        alert("Invalid code. Please try again.");
       }
+    }
 
-      // Trigger the checkCode function when "Enter" key is pressed
-      document.getElementById("access-code").addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-          checkCode();
-        }
-      });
+    // Function to toggle the visibility of the password
+    function togglePassword() {
+      const passwordField = document.getElementById("access-code");
+      const eyeIcon = document.getElementById("eye-icon");
 
-      // Disable right-click context menu and specific key combinations
-      document.addEventListener("contextmenu", function (event) {
+      if (passwordField.type === "password") {
+        passwordField.type = "text";
+        eyeIcon.innerHTML = '<path d="M12 5c-7.633 0-11 6.274-11 7 0 .726 3.367 7 11 7 2.197 0 4.123-.427 5.773-1.126l2.625 2.625 1.414-1.414-19.799-19.799-1.414 1.414 3.084 3.084c-1.447.836-2.548 1.998-3.4 3.216 1.142 1.679 3.526 4.384 7.717 4.384 1.554 0 2.992-.432 4.251-1.168l1.482 1.482c-1.585.904-3.402 1.372-5.733 1.372-4.149 0-7-3.281-7-5 0-.843 2.333-4.464 6.828-5.253l1.414 1.414c-2.356.319-4.242 1.329-5.242 2.505 1.142 1.679 3.526 4.384 7.717 4.384 1.554 0 2.992-.432 4.251-1.168l1.482 1.482c-1.585.904-3.402 1.372-5.733 1.372z"/>';
+      } else {
+        passwordField.type = "password";
+        eyeIcon.innerHTML = '<path d="M12 5c-7.633 0-11 6.274-11 7s3.367 7 11 7 11-6.274 11-7-3.367-7-11-7zm0 12c-4.149 0-7-3.281-7-5s2.851-5 7-5 7 3.281 7 5-2.851 5-7 5zm0-8c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zm0 4.5c-.828 0-1.5-.672-1.5-1.5s.672-1.5 1.5-1.5 1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>';
+      }
+    }
+
+    // Trigger the checkCode function when "Enter" key is pressed
+    document.getElementById("access-code").addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
         event.preventDefault();
-      });
+        checkCode();
+      }
+    });
 
-      document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "u") {
-          event.preventDefault();
-        }
+    // Disable right-click context menu and specific key combinations
+    document.addEventListener("contextmenu", function (event) {
+      event.preventDefault();
+    });
 
-        if (event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "J")) {
-          event.preventDefault();
-        }
-
-        if (event.key === "F12") {
-          event.preventDefault();
-        }
-      });
-    </script>
-  </body>
+    document.addEventListener("keydown", function (event) {
+      if (
+        (event.ctrlKey && event.key === "u") ||
+        (event.ctrlKey && event.shiftKey && (event.key === "I" || event.key === "J")) ||
+        (event.key === "F12")
+      ) {
+        event.preventDefault();
+      }
+    });
+  </script>
+</body>
 </html>
