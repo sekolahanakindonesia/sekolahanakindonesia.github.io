@@ -174,6 +174,30 @@
         transform: translateY(-2px);
       }
 
+            .download-button-2 {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 75px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .download-button-2:hover {
+        background-color: #007bff;
+        transform: translateY(-2px);
+      }
+
       .search-container {
         margin-bottom: 10px;
       }
@@ -206,6 +230,17 @@
           font-size: 14px; /* Ukuran font yang lebih kecil */
           top: 5px; /* Jarak dari bawah untuk perangkat mobile */
           right: 40px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+                .download-button-2 {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 75px; /* Jarak dari kanan untuk perangkat mobile */
           border-radius: 5px;
           width: 30px;
           height: 100px;
@@ -257,6 +292,9 @@
           <i class="fas fa-sign-out-alt"></i>
         </button>
         <button class="download-button" onclick="downloadDocument()">
+          <i class="fas fa-download"></i>
+        </button>
+                <button class="download-button-2" onclick="downloadDocument2()">
           <i class="fas fa-download"></i>
         </button>
       </div>
@@ -473,6 +511,15 @@
         const link = document.createElement("a");
         link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
         link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+            function downloadDocument2() {
+        const link = document.createElement("a");
+        link.href = "TDU_SMA_2425.xlsx"; // Path to the PDF file
+        link.download = "TDU_SMA_2425.xlsx"; // File name
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
