@@ -278,6 +278,46 @@
       if (accessGranted !== accessPermissions[currentPage]) {
         window.location.href = "/"; // Redirect to login page
       }
+
+
+      // Function to get today's date in YYYY-MM-DD format
+  function getTodayDate() {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  }
+
+  // Function to update active users count
+  function updateActiveUsers() {
+    const today = getTodayDate();
+    const activeUsers = localStorage.getItem(today) || 0;
+    document.getElementById('active-users').innerText = `Active Users: ${activeUsers}`;
+  }
+
+  // Function to increment active users count
+  function incrementActiveUsers() {
+    const today = getTodayDate();
+    let activeUsers = parseInt(localStorage.getItem(today) || 0);
+    activeUsers++;
+    localStorage.setItem(today, activeUsers);
+    updateActiveUsers();
+  }
+
+  // Function to reset active users count at midnight
+  function resetActiveUsersAtMidnight() {
+    const now = new Date();
+    const millisTillMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0) - now;
+    setTimeout(() => {
+      localStorage.setItem(getTodayDate(), 0);
+      updateActiveUsers();
+      resetActiveUsersAtMidnight(); // Set the timeout again for the next day
+    }, millisTillMidnight);
+  }
+
+  // Increment active users count when the page loads
+  window.addEventListener('load', incrementActiveUsers);
+
+  // Reset active users count at midnight
+  resetActiveUsersAtMidnight();
     </script>
 
     <div class="datetime" id="datetime">
@@ -296,6 +336,9 @@
         </button>
                 <button class="download-button-2" onclick="downloadDocument2()" title="Excel TDU">
           <i class="fas fa-download"></i>
+        </button>
+        <button class="download-button" onclick="downloadDocument()" title="Panduan Gsheet Penilaian 2425">
+          <div id="active-users" class="time-box">0</div>
         </button>
       </div>
     </div>
