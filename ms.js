@@ -88,10 +88,10 @@ const codes = {
   "2425_s1_klsma38": "2425_s1_sma",
   "2425_s1_kltdu47": "2425_s1_tdu",
 
-  "2425_s2_klsd10": "coming",
-  "2425_s2_klsmp29": "coming",
-  "2425_s2_klsma38": "coming",
-  "2425_s2_kltdu47": "coming",
+  "2425_s2_klsd10": "2425_s2_sd",
+  "2425_s2_klsmp29": "2425_s2_smp",
+  "2425_s2_klsma38": "2425_s2_sma",
+  "2425_s2_kltdu47": "2425_s2_tdu",
 };
 
 const cod = {
