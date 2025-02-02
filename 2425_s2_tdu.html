@@ -659,22 +659,14 @@
         document.body.removeChild(link);
       }
 
-function downloadDocuments2() {
-    const files = [
-        "TDU_SD_2425_S2.xlsx",
-        "TDU_SMP_2425_S2.xlsx",
-        "TDU_SMA_2425_S2.xlsx"
-    ];
-
-    files.forEach(file => {
+      function downloadDocument2() {
         const link = document.createElement("a");
-        link.href = file;
-        link.download = file;
+        link.href = "TDU_SD_2425_S2.xlsx","TDU_SMP_2425_S2.xlsx","TDU_SMA_2425_S2.xlsx"; // Path to the PDF file
+        link.download = "TDU_SD_2425_S2.xlsx","TDU_SMP_2425_S2.xlsx","TDU_SMA_2425_S2.xlsx"; // File name
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    });
-}
+      }
 
       document.addEventListener("keydown", function (event) {
         if (event.ctrlKey && event.key === "s") {
