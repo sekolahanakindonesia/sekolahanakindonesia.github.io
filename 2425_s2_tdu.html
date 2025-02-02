@@ -102,6 +102,31 @@
         transform: translateY(-2px);
       }
 
+            .download-button-2 {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 75px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .download-button-2:hover {
+        background-color: #007bff;
+        transform: translateY(-2px);
+      }
+
+
       .datetime {
         position: fixed; /* Use fixed positioning */
         top: 0;
