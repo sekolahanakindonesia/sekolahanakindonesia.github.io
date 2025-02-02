@@ -659,21 +659,23 @@
         document.body.removeChild(link);
       }
 
-function downloadDocuments2() {
-    const files = [
-        "TDU_SD_2425_S2.xlsx",
-        "TDU_SMP_2425_S2.xlsx"
-    ];
+function downloadDocuments() {
+  const files = [
+    { href: "TDU_SD_2425_S2.xlsx", name: "TDU_SD_2425_S2.xlsx" },
+    { href: "TDU_SMP_2425_S2.xlsx", name: "TDU_SMP_2425_S2.xlsx" },
+    { href: "TDU_SMA_2425_S2.xlsx", name: "TDU_SMA_2425_S2.xlsx" }
+  ];
 
-    files.forEach(file => {
-        const link = document.createElement("a");
-        link.href = file;  // Menetapkan URL file
-        link.download = file; // Menetapkan nama file untuk unduhan
-        document.body.appendChild(link);
-        link.click(); // Simulasikan klik untuk memulai unduhan
-        document.body.removeChild(link); // Menghapus elemen link setelah unduhan dimulai
-    });
+  files.forEach(file => {
+    const link = document.createElement("a");
+    link.href = file.href;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
 }
+
 
 
       document.addEventListener("keydown", function (event) {
