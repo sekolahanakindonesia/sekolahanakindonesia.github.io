@@ -670,8 +670,6 @@ function downloadDocuments2() {
         const link = document.createElement("a");
         link.href = file;
         link.download = file;
-        link.style.display = "none";
-
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
