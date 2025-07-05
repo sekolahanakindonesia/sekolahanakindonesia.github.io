@@ -1,1 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KuLi-SD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f3f4f6;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden; /* Prevent horizontal scroll */
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 1500px;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        margin-top: 100px; /* Add margin-top to avoid overlap with datetime section */
+      }
+
+      .box {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        flex: 1;
+        margin: 0 10px;
+        box-sizing: border-box;
+        min-width: 250px;
+      }
+
+      .box h1 {
+        margin-bottom: 20px;
+        color: #333;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+        max-height: 345px;
+        overflow-y: auto;
+      }
+
+      .button {
+        padding: 10px 15px;
+        font-size: 14px;
+        color: #ffffff;
+        background-color: #007bff;
+        text-decoration: none;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+        text-align: center;
+        display: block;
+      }
+
+      .button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .datetime {
+        position: fixed; /* Use fixed positioning */
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 90px; /* Adjust height if needed */
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        box-sizing: border-box;
+        z-index: 1000; /* Ensure it's on top */
+      }
+
+      .datetime .date {
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .time-container {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .time-box {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f1f1;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .separator {
+        font-size: 18px;
+        color: #333;
+      }
+
+      .logout-button {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #dc3545;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 5px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .logout-button:hover {
+        background-color: #c82333;
+        transform: translateY(-2px);
+      }
+
+      .download-button {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #28a745;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 40px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .download-button:hover {
+        background-color: #28a745;
+        transform: translateY(-2px);
+      }
+
+      .download-button-2 {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 75px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .download-button-2:hover {
+        background-color: #007bff;
+        transform: translateY(-2px);
+      }
+
+      .search-container {
+        margin-bottom: 10px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      /* Responsive styles */
+      @media (max-width: 768px) {
+        .logout-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 5px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .download-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 40px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .download-button-2 {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 75px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .box {
+          width: 100%;
+          max-width: none;
+          margin: 10px 0; /* Add vertical spacing between boxes */
+        }
+
+        .datetime {
+          height: auto; /* Sesuaikan tinggi berdasarkan konten */
+          padding: 20px; /* Padding yang lebih besar untuk perangkat mobile */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Define the access permissions for each page
+      const accessPermissions = {
+        "/2425_s1_sd.html": "2425_s1_sd",
+        "/2425_s1_smp.html": "2425_s1_smp",
+        "/2425_s1_sma.html": "2425_s1_sma",
+        "/2425_s1_tdu.html": "2425_s1_tdu",
+
+        "/2425_s2_sd.html": "2425_s2_sd",
+        "/2425_s2_smp.html": "2425_s2_smp",
+        "/2425_s2_sma.html": "2425_s2_sma",
+        "/2425_s2_tdu.html": "2425_s2_tdu",
+
+        "/2526_s1_sd.html": "2526_s1_sd",
+        "/2526_s1_smp.html": "2526_s1_smp",
+        "/2526_s1_sma.html": "2526_s1_sma",
+        "/2526_s1_tdu.html": "2526_s1_tdu",
+
+        "/2526_s2_sd.html": "2526_s2_sd",
+        "/2526_s2_smp.html": "2526_s2_smp",
+        "/2526_s2_sma.html": "2526_s2_sma",
+        "/2526_s2_tdu.html": "2526_s2_tdu",
+      };
+
+      // Get the current page URL and access granted
+      const currentPage = window.location.pathname;
+      const accessGranted = sessionStorage.getItem("accessGranted");
+
+      // Check if the current page is allowed for the granted access
+      if (accessGranted !== accessPermissions[currentPage]) {
+        window.location.href = "/"; // Redirect to login page
+      }
+    </script>
+
+    <div class="datetime" id="datetime">
+      <div class="date" id="date"></div>
+      <div class="time-container">
+        <div id="hour" class="time-box"></div>
+        <span class="separator">:</span>
+        <div id="minute" class="time-box"></div>
+        <span class="separator">:</span>
+        <div id="second" class="time-box"></div>
+        <button class="logout-button" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+        <button class="download-button" onclick="downloadDocument()" title="Panduan Gsheet Penilaian 2425">
+          <i class="fas fa-download"></i>
+        </button>
+        <button class="download-button-2" onclick="downloadDocument2()" title="Excel TDU">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- GSheet Penilaian Section -->
+      <div class="box">
+        <h1>GSheet Penilaian</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('penilaian', this.value)" />
+        </div>
+        <div class="button-container" id="penilaian">
+          <a href="https://docs.google.com/spreadsheets/d/1n_Vn4SQi5T6ZZSqPdigAJUxCN5_F5t4JYoRhPXRCmec/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1TR8HQa1SvGTZIJMhXrqXPQrIkdej3ZEsA_xnI886Ygk/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1CbGWUXViIlccBSOsqt7F9mMazKwb1wHHWSTF_5sO8bs/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1DfO8Fec1O-f6vxXwouLjmBGpNIsdjki2V3MdLLHEV1E/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1fu_qsYYAQWzMkLUENYD1oYwnLAjkXppP21rqMXk5l1k/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-Qg2SlxtitpujDTHR4IW3EH2os8HuYxCTFw4KMb04r0/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN ALAM_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1T544EEzRp5F_YFxSLTnteU0xX7rLlMumRD377KNfk0Q/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FusfiHpgtKRV4QH-0UVoHRzppkwcsAFd6DfFE4PGtYY/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Erzh-9srml63qM-Mff3UrW4Yfj8Tx0uT03IQ4oNDzKQ/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1fWti3e3qsRVLMlIzSjMD-TGMTwqrWsqsvz90-NE2ySA/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zbEi6qGQnplV_7vRhUX9YNv8-fvzse_MGzFS9pVc0io/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1L3czDV3dyr7S8hVg2xoDd1uDBv1fr_37cZ3QO_rhYi0/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1LFWrxz-3U7xy-gQj7T_iw-Eu-ay00PNhGoj9UwX9v6k/edit?usp=sharing" class="button" target="_blank">PROYEK AIR TERJUN_4A_SD</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1newRsYQ7W7QKUyFqlCOW0oY72Na8GNMm9F4oSzaFCGg/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1RxekW3nvGPtk4H4N0WmiaTpJxX7SAyB0kYwirHfOykU/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1tZiFa3IUcozLuEYFZNFz6iAGriDxdv4epr9dtJZvAwA/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1WPxfEgBSjGDAVXK8Mec_nrHBPpdfkZEtBidJqrAocq8/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/16Gwzw0cz5qub2jQxN0ZW-wTYj_J6OsXZiywCurJ2FmU/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Xu9sVOPrqbs-kMqwyBqThE3qz5TD3BI4jRzhsgTF1js/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN ALAM_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yZXxmAsmJ7wqOXt57w4oHPP6A1_p4GC9xizrYOhxA38/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/15rkm_yZZahm57kEOHXuYepHmtRf9Zjs7FNOlVIIedIQ/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1qWYLd3rsGqbrJwy8bhNCE9yUHMT9zFpXiJJPOaxrkIs/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1vz3bHZ8dS2PyK9V6EwJX3F44PwXUaIucbV5TbWVhl4w/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Lv76qc_7DdRmk6wpvjQg_aoULNRagllNZFt6sOUAkxg/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1pYWPXfRi7jCdX7ZK_Vi-6FB1RJdOUtIaJVQ8L1Ap-bo/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1QmdxKUFPKKMzNLpM-xTRREeJQf531gcOy0pV-A8eRhQ/edit?usp=sharing" class="button" target="_blank">PROYEK ROLE PLAY PROFESI_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zHFSwYVIsm6NM0HRSMxRS9293DczboA5O-B9N497jq8/edit?usp=sharing" class="button" target="_blank">PROYEK ANIMASI PROFESI MENGGUNAKAN SCRATCH_5A_SD</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1XGSH_MIl06Dq6ceiXVczK_Pw0CxEIYbRQJ7884Kq4LI/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1vq8W8kBPy66INZRTuPhlo8uCF2zcquWSIuuzxXD-r6g/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1x0ROkB5yFV97KwT5R4umm3m9qSdnuM3GU0SSeYxD2Cs/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1DTTVybB2ZX-Oyfozd_mUIBCNBahvCosa6h0TSM7hkEA/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1QTSvU2aHnS_XfUFQx72_KzrNIvm3oG0zIKaHfLe5tPw/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1o6_LFCETKYHJ1ZM8VfnRhsYqlEca3wMVSWegDOvSyrk/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN ALAM_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/14k5-tbymOcJTNY8V7aBdqYhEZaku6Qi6KzKeQvdoeNE/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1IjMKCzm98Oubyosp_jSwGzA0x5jPbbIwPzejUmGesHk/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1msNX4l-aqrVTQ1IWURA-yQRBHtIMdfEomyx65GzrcuM/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1sfeTrx3xyjko0umKBF2tp9e5BTd2V58c4lZ-SKZm5tY/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1a5n733RYTQhtpOSgIR6bVECI4MMuO9TCZdlKlHCYLwY/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN KEWARGANEGARAAN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/17sIgCBwAvUuQLlWpC0QURIJmsIdDd9jHXd3ObB2dxso/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1WpRod4VmG7q9FkGTBanJQSZmj8c5quV1BbtJF6r1JHE/edit?usp=sharing" class="button" target="_blank">PROYEK ROLE PLAY PROFESI_5B_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1HZdSdhr0dLVNw0EA-k9cpxLnEC-rQ4LDNLRF9cKMX4M/edit?usp=sharing" class="button" target="_blank">PROYEK ANIMASI PROFESI MENGGUNAKAN SCRATCH_5B_SD</a>
+
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Absensi Section -->
+      <div class="box">
+        <h1>Absensi</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('absensi', this.value)" />
+        </div>
+        <div class="button-container" id="absensi">
+          <a href="https://docs.google.com/spreadsheets/d/1DHK7h7e433g4lvAX3kLJjxG5wZHqXNfNg3K-lvwC7B4/edit?usp=sharing" class="button" target="_blank">ABSENSI_4A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zbovvnchVi9lEbFu7K5OCQvnTH715WAcTS829hWt4fo/edit?usp=sharing" class="button" target="_blank">ABSENSI_5A_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1F58Pv3TeTALzBgiYmfj-YV3QWOUSE6jWGMIuvWadZu4/edit?usp=sharing" class="button" target="_blank">ABSENSI_5B_SD</a>
+
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Ledger Section -->
+      <div class="box">
+        <h1>Ledger</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('ledger', this.value)" />
+        </div>
+        <div class="button-container" id="ledger">
+          <a href="https://docs.google.com/spreadsheets/d/1rA-nSpcooWQSrszicBk5gjm6CP3G7HFbUIrV7K76nKY/edit?usp=sharing" class="button" target="_blank">4A</a>
+          <a href="https://docs.google.com/spreadsheets/d/1mFGR7DkrD5jGk3qrHodXo5o76WwpU126zmvqajwcHAQ/edit?usp=sharing" class="button" target="_blank">5A</a>
+          <a href="https://docs.google.com/spreadsheets/d/1t0RVDZvudiwU_NxYg5QaL7WCFsL6kYVaVOjGBBiWLmI/edit?usp=sharing" class="button" target="_blank">5B</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FW5xt-XC_pGae94an6wdInG4Ne6rLb3_XN-dpHrkuLE/edit?usp=sharing" class="button" target="_blank">LEDGER SD</a>
+          <a href="https://drive.google.com/drive/folders/1JzqKVBBXYIv2pQgS_I_J5pgUEiiBn6RX?usp=sharing" class="button" target="_blank">RAPOR SD</a>
+
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Data Master Section -->
+      <div class="box">
+        <h1>Data Master</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('dataMaster', this.value)" />
+        </div>
+        <div class="button-container" id="dataMaster">
+          <a href="https://docs.google.com/spreadsheets/d/1HF2TYmF7On2212oE8NuvXv7K8UkA88vuCGR2owO_mmE/edit?usp=sharing" class="button" target="_blank">MASTER SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1VCHzfYYHv1WheVeI3un7y0hQLZ8j731lVPHMj-Qfdw8/edit?usp=sharing" class="button" target="_blank">P5 4A</a>
+          <a href="https://docs.google.com/spreadsheets/d/1_hgW_7BrtyqYd866srYmZa_bSo1ke30cBsPA2tKg498/edit?usp=sharing" class="button" target="_blank">P5 5A</a>
+          <a href="https://docs.google.com/spreadsheets/d/1L6E8sr4EPzFJUTG340XOlSbAO6ifVgbJr24K6Uz6f_4/edit?usp=sharing" class="button" target="_blank">P5 5B</a>
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function updateDateTime() {
+        const now = new Date();
+        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+        const dayName = days[now.getDay()];
+        const monthName = months[now.getMonth()];
+        const day = now.getDate();
+        const year = now.getFullYear();
+        const hour = String(now.getHours()).padStart(2, "0");
+        const minute = String(now.getMinutes()).padStart(2, "0");
+        const second = String(now.getSeconds()).padStart(2, "0");
+
+        document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
+        document.getElementById("hour").textContent = hour;
+        document.getElementById("minute").textContent = minute;
+        document.getElementById("second").textContent = second;
+      }
+
+      function logout() {
+        sessionStorage.removeItem("accessGranted"); // Clear the access flag
+        window.location.href = "/"; // Redirect to the base URL
+      }
+
+      function filterButtons(containerId, searchTerm) {
+        const container = document.getElementById(containerId);
+        const buttons = container.getElementsByClassName("button");
+        for (let button of buttons) {
+          if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+            button.style.display = "block";
+          } else {
+            button.style.display = "none";
+          }
+        }
+      }
+
+      // Disable right-click context menu
+      document.addEventListener("contextmenu", function (event) {
+        event.preventDefault();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "u") {
+          event.preventDefault();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
+        if (event.ctrlKey && event.shiftKey && event.key === "I") {
+          event.preventDefault();
+        }
+
+        // Prevent F12 (DevTools)
+        if (event.key === "F12") {
+          event.preventDefault();
+        }
+      });
+
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+
+      function downloadDocument() {
+        const link = document.createElement("a");
+        link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
+        link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      function downloadDocument2() {
+        const link = document.createElement("a");
+        link.href = "TDU_SD_2425_S2.xlsx"; // Path to the PDF file
+        link.download = "TDU_SD_2425_S2.xlsx"; // File name
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "s") {
+          event.preventDefault();
+        }
+      });
+    </script>
+  </body>
+</html>
