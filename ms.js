@@ -94,7 +94,7 @@ const codes = {
   "2425_s2_kltdu47": "2425_s2_tdu",
 
   "2526_s1_klsd10": "2526_s1_sd",
-  "2526_s1_klsmp29": "coming",
+  "2526_s1_klsmp29": "2526_s1_smp",
   "2526_s1_klsma38": "coming",
   "2526_s1_kltdu47": "coming",
 
