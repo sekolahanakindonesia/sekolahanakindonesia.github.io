@@ -93,15 +93,15 @@ const codes = {
   "2425_s2_klsma38": "2425_s2_sma",
   "2425_s2_kltdu47": "2425_s2_tdu",
 
-  "2526_s1_klsd10": "coming.html",
-  "2526_s1_klsmp29": "coming.html",
-  "2526_s1_klsma38": "coming.html",
-  "2526_s1_kltdu47": "coming.html",
+  "2526_s1_klsd10": "coming",
+  "2526_s1_klsmp29": "coming",
+  "2526_s1_klsma38": "coming",
+  "2526_s1_kltdu47": "coming",
 
-  "2526_s2_klsd10": "coming.html",
-  "2526_s2_klsmp29": "coming.html",
-  "2526_s2_klsma38": "coming.html",
-  "2526_s2_kltdu47": "coming.html",
+  "2526_s2_klsd10": "coming",
+  "2526_s2_klsmp29": "coming",
+  "2526_s2_klsma38": "coming",
+  "2526_s2_kltdu47": "coming",
 };
 
 const cod = {
