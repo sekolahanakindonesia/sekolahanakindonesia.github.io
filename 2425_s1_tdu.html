@@ -78,7 +78,7 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
       }
 
-            .download-button {
+      .download-button {
         width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
         height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
         font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
@@ -101,6 +101,31 @@
         background-color: #28a745;
         transform: translateY(-2px);
       }
+
+            .download-button-2 {
+        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
+        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
+        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
+        color: #ffffff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
+        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
+        right: 75px; /* Atur jarak dari kanan untuk perangkat mobile */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
+      }
+
+      .download-button-2:hover {
+        background-color: #007bff;
+        transform: translateY(-2px);
+      }
+
 
       .datetime {
         position: fixed; /* Use fixed positioning */
@@ -189,7 +214,7 @@
 
       /* Responsive styles */
       @media (max-width: 768px) {
-        .logout-button{
+        .logout-button {
           width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
@@ -209,9 +234,18 @@
           border-radius: 5px;
           width: 30px;
           height: 100px;
+        }        .download-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 40px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
         }
 
-        .download-button-2 {
+                .download-button-2 {
           width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
@@ -282,6 +316,9 @@
           <i class="fas fa-sign-out-alt"></i>
         </button>
         <button class="download-button" onclick="downloadDocument()">
+          <i class="fas fa-download"></i>
+        </button>
+        <button class="download-button-2" onclick="downloadDocument2()" title="Excel TDU">
           <i class="fas fa-download"></i>
         </button>
       </div>
@@ -472,8 +509,8 @@
           <a href="https://docs.google.com/spreadsheets/d/1bVSEbjFBa1Pu7d-Kp1u5ZWMG_umiy2RDZZKjXPXrweQ/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_12A_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1_ttaw6IndOsHjxwcMuI-Ym5myyWj06TKwDHPfG5dZvQ/edit?usp=sharing" class="button" target="_blank">PROYEK KOPI_12A_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1RUf2u3tNfwK5tWQ0HeeLvya0Q_uKXCNS-BG_wast0t8/edit?usp=sharing" class="button" target="_blank">PROYEK TEPUNG_12A_SMA</a>
-
-<a href="https://docs.google.com/spreadsheets/d/16OF4a18t1a3xSjUSf-K68s4y0t85TMrQBnri_HBmplo/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_11B_SMA</a>
+          
+          <a href="https://docs.google.com/spreadsheets/d/16OF4a18t1a3xSjUSf-K68s4y0t85TMrQBnri_HBmplo/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_11B_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/16sLzdzK-VXtfFJUnPNKbiPwxQvY8aVkpfI2GNgfBmzU/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_11B_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1aSPPjpRoUqNm066QZ0HFtU2uz4xkhnP4TK-Ho3S2um8/edit?usp=sharing" class="button" target="_blank">AGROTEK_11B_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1NmvFdQqRBSntB644r2hTB8bKSqVvYxBqkbJDjsksVak/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_11B_SMA</a>
@@ -498,7 +535,7 @@
           <a href="https://docs.google.com/spreadsheets/d/18VLM2lqhu60m97eczMaFruazH7OKEznJPxTlddXoBVA/edit?usp=sharing" class="button" target="_blank">PROYEK BUDIDAYA TANAMAN TALAS DAN PENGOLAHANNYA_12B_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1wxfWfmf6tcwr8TPNFQ_zYsKqG-Y7qlo1XZLcSsqgZKg/edit?usp=sharing" class="button" target="_blank">PROYEK DOKUMEN KAMPUNG ABAD-21_12B_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1gHeEbnK6a5DjKinexvXnqRSqdF85NHrci5qVwrX4jlc/edit?usp=sharing" class="button" target="_blank">PROYEK INSTALASI PLTS SUPPORT KEBUN BELAKANG GH-21_12B_SMA</a>
-          
+
           <!-- Add more links as needed -->
         </div>
       </div>
@@ -524,7 +561,6 @@
           <a href="https://docs.google.com/spreadsheets/d/1XmkiWh9PKl78XALl-rBOFGfgGa2GfGXY2A3f7ZO33cI/edit?usp=sharing" class="button" target="_blank">ABSENSI 11B SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1Wdo51okcY4LfhtpTMy4A2eO2zAVtXYroVZ1q3z4Cb2Q/edit?usp=sharing" class="button" target="_blank">ABSENSI 12A SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1Z2XWLYtUKpYnp74SEvFxycFhhuvtejYNkXdEb-z_MuA/edit?usp=sharing" class="button" target="_blank">ABSENSI 12B SMA</a>
-
           <!-- Add more links as needed -->
         </div>
       </div>
@@ -645,7 +681,7 @@
       updateDateTime();
       setInterval(updateDateTime, 1000);
 
-            function downloadDocument() {
+      function downloadDocument() {
         const link = document.createElement("a");
         link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
         link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
@@ -654,11 +690,30 @@
         document.body.removeChild(link);
       }
 
-      document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "s") {
-      event.preventDefault();
-    }
+function downloadDocument2() {
+  const files = [
+    { href: "TDU_SD_2425_S1.xlsx", name: "TDU_SD_2425_S1.xlsx" },
+    { href: "TDU_SMP_2425_S1.xlsx", name: "TDU_SMP_2425_S1.xlsx" },
+    { href: "TDU_SMA_2425_S1.xlsx", name: "TDU_SMA_2425_S1.xlsx" }
+  ];
+
+  files.forEach(file => {
+    const link = document.createElement("a");
+    link.href = file.href;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   });
+}
+
+
+
+      document.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.key === "s") {
+          event.preventDefault();
+        }
+      });
     </script>
   </body>
 </html>
