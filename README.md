@@ -5,7 +5,7 @@ Guru sering kali menghadapi kendala dalam mengelola berbagai link penting sepert
 
 Proyek ini hadir sebagai **dashboard web sederhana** yang menyimpan dan menampilkan tautan-tautan penting tersebut dalam satu halaman rapi dan responsif, khususnya ditujukan untuk memudahkan para guru dalam aktivitas sehari-hari.
 
-🌐 Cek langsung: [https://sekolahanakindonesia.github.io/](https://sekolahanakindonesia.github.io/)
+🌐 Cek langsung: [KuLi](https://sekolahanakindonesia.github.io/)
 
 ---
 
@@ -21,7 +21,7 @@ Proyek ini hadir sebagai **dashboard web sederhana** yang menyimpan dan menampil
 
 ## 🚀 Cara Menggunakan
 
-1. Buka halaman: https://sekolahanakindonesia.github.io/
+1. Buka halaman: [KuLi](https://sekolahanakindonesia.github.io/)
 2. Pilih tahun ajaran sesuai kebutuhan Anda
 3. Pilih semester sesuai kebutuhan Anda
 4. Enter Code sesuai dengan jenjang
