@@ -64,4 +64,5 @@ Proyek ini masih terus dikembangkan. Jika Anda memiliki saran, ide, atau ingin i
 Proyek ini dilisensikan di bawah [MIT License](LICENSE).  
 Anda bebas menggunakan, menyalin, dan memodifikasi proyek ini selama mencantumkan atribusi kepada pembuat asli.
 
-© 2024 Rizal Fahmi — semua hak cipta dilindungi dengan niat amanah dan kebaikan untuk membantu sesama guru.
+© 2024 [Rizal Fahmi](https://rzalfahmy.github.io/)  
+Hak cipta dilindungi. Proyek ini dikembangkan dengan semangat kolaboratif dan dedikasi untuk mempermudah pekerjaan para guru.
