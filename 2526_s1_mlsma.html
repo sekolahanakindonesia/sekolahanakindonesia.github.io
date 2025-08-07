@@ -96,6 +96,12 @@
 
 </head>
 <body>
+  <script>
+  if (sessionStorage.getItem("aksesDiperbolehkan") !== "true") {
+    alert("Akses ditolak. Silakan buka halaman sebelumnya terlebih dahulu.");
+    window.location.href = "https://sekolahanakindonesia.github.io/2526_s1_sma.html";
+  }
+</script>
   <h2>Machine Learning - Prediksi Nilai Rapor SMA</h2>
 
   <label for="kelasFilter">Pilih Kelas:</label>
@@ -338,5 +344,6 @@ rowNilai.push(
   </script>
 </body>
 </html>
+
 
 
