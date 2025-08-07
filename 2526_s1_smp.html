@@ -261,6 +261,9 @@
   </head>
   <body>
     <script>
+      localStorage.setItem("izinRapor", "ya");
+    </script>
+    <script>
       // Define the access permissions for each page
       const accessPermissions = {
         "/2425_s1_sd.html": "2425_s1_sd",
@@ -437,6 +440,8 @@
           <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('ledger', this.value)" />
         </div>
         <div class="button-container" id="ledger">
+          <a href="2526_s1_mlsmp.html" class="button" target="_blank">ML_Predik_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1rkQbARCPP8DU0Gxt64od6TdGyrzYHelafY0UTkwoIN0/edit?usp=sharing.html" class="button" target="_blank">ALL_SMP</a>
           <!--
           <a href="coming.html" class="button" target="_blank">7A</a>
           <a href="coming.html" class="button" target="_blank">7B</a>
