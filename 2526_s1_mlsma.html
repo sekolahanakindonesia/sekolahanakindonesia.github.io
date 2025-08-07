@@ -96,43 +96,6 @@
 
 </head>
 <body>
-  
-      <script>
-      // Define the access permissions for each page
-      const accessPermissions = {
-        "/2425_s1_sd.html": "2425_s1_sd",
-        "/2425_s1_smp.html": "2425_s1_smp",
-        "/2425_s1_sma.html": "2425_s1_sma",
-        "/2425_s1_tdu.html": "2425_s1_tdu",
-
-        "/2425_s2_sd.html": "2425_s2_sd",
-        "/2425_s2_smp.html": "2425_s2_smp",
-        "/2425_s2_sma.html": "2425_s2_sma",
-        "/2425_s2_tdu.html": "2425_s2_tdu",
-
-        "/2526_s1_sd.html": "2526_s1_sd",
-        "/2526_s1_smp.html": "2526_s1_smp",
-        "/2526_s1_sma.html": "2526_s1_sma",
-        "/2526_s1_mlsma.html": "2526_s1_mlsma",
-        "/2526_s1_tdu.html": "2526_s1_tdu",
-
-        "/2526_s2_sd.html": "2526_s2_sd",
-        "/2526_s2_smp.html": "2526_s2_smp",
-        "/2526_s2_sma.html": "2526_s2_sma",
-        "/2526_s2_mlsma.html": "2526_s2_mlsma",
-        "/2526_s2_tdu.html": "2526_s2_tdu",
-      };
-
-      // Get the current page URL and access granted
-      const currentPage = window.location.pathname;
-      const accessGranted = sessionStorage.getItem("accessGranted");
-
-      // Check if the current page is allowed for the granted access
-      if (accessGranted !== accessPermissions[currentPage]) {
-        window.location.href = "/"; // Redirect to login page
-      }
-    </script>
-
   <h2>Machine Learning - Prediksi Nilai Rapor SMA</h2>
 
   <label for="kelasFilter">Pilih Kelas:</label>
@@ -375,4 +338,5 @@ rowNilai.push(
   </script>
 </body>
 </html>
+
 
