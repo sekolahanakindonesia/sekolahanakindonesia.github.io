@@ -287,17 +287,8 @@
           }
           const nilaiRapor = kategoriList.map(k => nilaiPerKategori[k].length ? nilaiPerKategori[k].reduce((a,b)=>a+b,0)/nilaiPerKategori[k].length : 0);
           const raporFinal = nilaiRapor.filter(v => v > 0).length ? (nilaiRapor.reduce((a,b)=>a+b,0)/nilaiRapor.filter(v => v>0).length).toFixed(2) : '0';
-          const raporClass = parseFloat(raporFinal) < kkm ? 'red-bold' : '';
-tbody.append(`<tr>
-  <td>${no++}</td>
-  <td>${key.split('|')[0]}</td>
-  <td class="text-left">${nama}</td>
-  <td>${kelas}</td>
-  <td>${kkm}</td>
-  <td class="text-left">${mapel}</td>
-  <td class="${raporClass}">${raporFinal}</td>
-</tr>`);
-
+          tbody.append(`<tr><td>${no++}</td><td>${key.split('|')[0]}</td><td class="text-left">${nama}</td><td>${kelas}</td><td>${kkm}</td><td class="text-left">${mapel}</td><td>${raporFinal}</td></tr>`);
+        } else {
           for (const materi in nilaiMateri) {
             if ($('#materiFilter').val() && materi !== $('#materiFilter').val()) continue;
             const rowNilai = [];
@@ -356,10 +347,3 @@ rowNilai.push(
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
