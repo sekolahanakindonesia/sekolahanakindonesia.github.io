@@ -96,12 +96,15 @@
 
 </head>
 <body>
-  <script>
-  if (sessionStorage.getItem("aksesDiperbolehkan") !== "true") {
+<script>
+  if (localStorage.getItem("izinRapor") !== "ya") {
     alert("Akses ditolak. Silakan buka halaman sebelumnya terlebih dahulu.");
     window.location.href = "https://sekolahanakindonesia.github.io/2526_s1_sma.html";
+  } else {
+    localStorage.removeItem("izinRapor");
   }
 </script>
+
   <h2>Machine Learning - Prediksi Nilai Rapor SMA</h2>
 
   <label for="kelasFilter">Pilih Kelas:</label>
@@ -344,6 +347,7 @@ rowNilai.push(
   </script>
 </body>
 </html>
+
 
 
 
