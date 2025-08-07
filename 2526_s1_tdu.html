@@ -261,6 +261,9 @@
     </style>
   </head>
   <body>
+        <script>
+      localStorage.setItem("izinRapor", "ya");
+    </script>
     <script>
       // Define the access permissions for each page
       const accessPermissions = {
@@ -548,7 +551,10 @@
           <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('ledger', this.value)" />
         </div>
         <div class="button-container" id="ledger">
-          
+
+          <a href="2526_s1_mlsd.html" class="button" target="_blank">ML_Predik_SD</a>
+          <a href="2526_s1_mlsmp.html" class="button" target="_blank">ML_Predik_SMP</a>
+          <a href="2526_s1_mlsma.html" class="button" target="_blank">ML_Predik_SMA</a>
           <a href="https://docs.google.com/spreadsheets/d/1tn_jqAjvxnoTow_ZTJGeRRs89g2baPPjYkAjMnoIZ88/edit?usp=sharing" class="button" target="_blank">ALL SD</a>
           <a href="https://docs.google.com/spreadsheets/d/1rkQbARCPP8DU0Gxt64od6TdGyrzYHelafY0UTkwoIN0/edit?usp=sharing" class="button" target="_blank">ALL SMP</a>
           <a href="https://docs.google.com/spreadsheets/d/1g-PQD3-zfCB6wugazPCPTVf2l3ecb9-AW2CKsGQx464/edit?usp=sharing" class="button" target="_blank">ALL SMA</a>
@@ -587,9 +593,9 @@
           <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('dataMaster', this.value)" />
         </div>
         <div class="button-container" id="dataMaster">
-          <a href="https://docs.google.com/spreadsheets/d/1ELOc82pFT3jzDE3r11j2ZIR_tiCuGesQpDqvsUdwkTE/edit?usp=sharing" class="button" target="_blank">MASTER SD</a>
-          <a href="https://docs.google.com/spreadsheets/d/1-AgkE4_DFzwEtaNAeM-BeECpd1ojI5Z2nmVRGK0SkJM/edit?usp=sharing" class="button" target="_blank">MASTER SMP</a>
-          <a href="https://docs.google.com/spreadsheets/d/1-uhG8rCEJUnTG04pIspTZ6IU1l_hcS4xb1uUQHUikDQ/edit?usp=sharing" class="button" target="_blank">MASTER SMA</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ELOc82pFT3jzDE3r11j2ZIR_tiCuGesQpDqvsUdwkTE/edit?usp=sharing" class="button" target="_blank">MASTER_SD</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-AgkE4_DFzwEtaNAeM-BeECpd1ojI5Z2nmVRGK0SkJM/edit?usp=sharing" class="button" target="_blank">MASTER_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-uhG8rCEJUnTG04pIspTZ6IU1l_hcS4xb1uUQHUikDQ/edit?usp=sharing" class="button" target="_blank">MASTER_SMA</a>
           <!--
           <a href="coming.html" class="button" target="_blank">P5 4A</a>
           <a href="coming.html" class="button" target="_blank">P5 5A</a>
