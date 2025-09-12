@@ -6,310 +6,256 @@
     <title>KuLi-SMA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
-      /* efek glitch halaman */
-body.glitch * {
-  animation: glitchAnim 0.3s infinite;
-  text-shadow: 2px 2px red, -2px -2px blue;
-  background: black !important;
-  color: lime !important;
-}
+  /* === HACK EFFECT === */
+  body.glitch {
+    background: black !important;
+    color: lime !important;
+    font-family: monospace !important;
+  }
 
-      @keyframes glitchAnim {
-  0% { transform: skew(0deg); }
-  20% { transform: skew(5deg); }
-  40% { transform: skew(-5deg); }
-  60% { transform: skew(3deg); }
-  80% { transform: skew(-3deg); }
-  100% { transform: skew(0deg); }
-}
+  /* semua teks berubah neon hijau + flicker */
+  body.glitch * {
+    background: transparent !important;
+    color: lime !important;
+    text-shadow: 0 0 5px lime, 0 0 10px green;
+    border: none !important;
+    animation: flicker 1s infinite alternate;
+  }
 
-      /* layer flash ledakan */
-#flash {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: white;
-  opacity: 0;
-  z-index: 9999;
-  pointer-events: none;
-}
-.flash-show {
-  animation: flashAnim 1s forwards;
-}
-@keyframes flashAnim {
-  0% { opacity: 1; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
-}
+  /* efek flicker monitor rusak */
+  @keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
 
-/* teks besar penanda pulang */
-#pulangMsg {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 60px;
-  font-weight: bold;
-  color: red;
-  background: black;
-  padding: 20px 40px;
-  border-radius: 12px;
-  z-index: 10000;
-  display: none;
-}
-      
+  /* teks hack palsu muncul */
+  .hack-text {
+    font-size: 18px;
+    color: lime;
+    font-family: monospace;
+    white-space: pre-wrap;
+    margin: 10px;
+    animation: typewriter 3s steps(40) 1;
+    overflow: hidden;
+    border-right: 2px solid lime;
+  }
 
-      body {
-        font-family: "Poppins", sans-serif;
-        background-color: #f3f4f6;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        overflow-x: hidden; /* Prevent horizontal scroll */
-      }
+  /* animasi mengetik */
+  @keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+  }
 
-      .container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 1500px;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-        margin-top: 100px; /* Add margin-top to avoid overlap with datetime section */
-      }
+  /* === FLASH EFFECT === */
+  #flash {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: white;
+    opacity: 0;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .flash-show {
+    animation: flashAnim 1s forwards;
+  }
+  @keyframes flashAnim {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+  }
 
-      .box {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        flex: 1;
-        margin: 0 10px;
-        box-sizing: border-box;
-        min-width: 250px;
-      }
+  /* teks besar penanda pulang */
+  #pulangMsg {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    font-weight: bold;
+    color: red;
+    background: black;
+    padding: 20px 40px;
+    border-radius: 12px;
+    z-index: 10000;
+    display: none;
+  }
 
-      .box h1 {
-        margin-bottom: 20px;
-        color: #333;
-        font-size: 24px;
-        font-weight: 600;
-      }
+  /* === LAYOUT UTAMA === */
+  body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
 
-      .button-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        justify-content: center;
-        max-height: 345px;
-        overflow-y: auto;
-      }
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1500px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-top: 100px; /* avoid overlap with datetime */
+  }
 
-      .button {
-        padding: 10px 15px;
-        font-size: 14px;
-        color: #ffffff;
-        background-color: #007bff;
-        text-decoration: none;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-        text-align: center;
-        display: block;
-      }
+  .box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+    box-sizing: border-box;
+    min-width: 250px;
+  }
 
-      .button:hover {
-        background-color: #0056b3;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-      }
+  .box h1 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+  }
 
-      .datetime {
-        position: fixed; /* Use fixed positioning */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 90px; /* Adjust height if needed */
-        background-color: #ffffff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        box-sizing: border-box;
-        z-index: 1000; /* Ensure it's on top */
-      }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    max-height: 345px;
+    overflow-y: auto;
+  }
 
-      .datetime .date {
-        font-size: 14px;
-        text-align: center;
-        margin-bottom: 10px;
-      }
+  .button {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    display: block;
+  }
 
-      .time-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
+  .button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
 
-      .time-box {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f1f1f1;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
+  .datetime {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
 
-      .separator {
-        font-size: 18px;
-        color: #333;
-      }
+  .datetime .date {
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-      .logout-button {
-        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
-        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
-        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
-        color: #ffffff;
-        background-color: #dc3545;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
-        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
-        right: 5px; /* Atur jarak dari kanan untuk perangkat mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
-      }
+  .time-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 
-      .logout-button:hover {
-        background-color: #c82333;
-        transform: translateY(-2px);
-      }
+  .time-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f1f1;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-      .download-button {
-        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
-        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
-        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
-        color: #ffffff;
-        background-color: #28a745;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
-        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
-        right: 40px; /* Atur jarak dari kanan untuk perangkat mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
-      }
+  .separator {
+    font-size: 18px;
+    color: #333;
+  }
 
-      .download-button:hover {
-        background-color: #28a745;
-        transform: translateY(-2px);
-      }
+  /* tombol logout dan download */
+  .logout-button,
+  .download-button,
+  .download-button-2 {
+    width: 30px;
+    height: 80px;
+    font-size: 14px;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    position: fixed;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .logout-button {
+    background-color: #dc3545;
+    right: 5px;
+  }
+  .logout-button:hover { background-color: #c82333; transform: translateY(-2px); }
 
-      .download-button-2 {
-        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
-        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
-        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
-        color: #ffffff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
-        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
-        right: 75px; /* Atur jarak dari kanan untuk perangkat mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
-      }
+  .download-button {
+    background-color: #28a745;
+    right: 40px;
+  }
+  .download-button:hover { background-color: #218838; transform: translateY(-2px); }
 
-      .download-button-2:hover {
-        background-color: #007bff;
-        transform: translateY(-2px);
-      }
+  .download-button-2 {
+    background-color: #007bff;
+    right: 75px;
+  }
+  .download-button-2:hover { background-color: #0056b3; transform: translateY(-2px); }
 
-      .search-container {
-        margin-bottom: 10px;
-      }
+  /* Responsive */
+  @media (max-width: 768px) {
+    .box { width: 100%; margin: 10px 0; }
 
-      .search-input {
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-sizing: border-box;
-      }
+    .datetime { height: auto; padding: 20px; }
 
-      /* Responsive styles */
-      @media (max-width: 768px) {
-        .logout-button {
-          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
-          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
-          font-size: 14px; /* Ukuran font yang lebih kecil */
-          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
-          right: 5px; /* Jarak dari kanan untuk perangkat mobile */
-          border-radius: 5px;
-          width: 30px;
-          height: 100px;
-        }
+    .logout-button,
+    .download-button,
+    .download-button-2 {
+      width: 30px;
+      height: 100px;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+  }
+</style>
 
-        .download-button {
-          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
-          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
-          font-size: 14px; /* Ukuran font yang lebih kecil */
-          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
-          right: 40px; /* Jarak dari kanan untuk perangkat mobile */
-          border-radius: 5px;
-          width: 30px;
-          height: 100px;
-        }
-
-        .download-button-2 {
-          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
-          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
-          font-size: 14px; /* Ukuran font yang lebih kecil */
-          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
-          right: 75px; /* Jarak dari kanan untuk perangkat mobile */
-          border-radius: 5px;
-          width: 30px;
-          height: 100px;
-        }
-
-        .box {
-          width: 100%;
-          max-width: none;
-          margin: 10px 0; /* Add vertical spacing between boxes */
-        }
-
-        .datetime {
-          height: auto; /* Sesuaikan tinggi berdasarkan konten */
-          padding: 20px; /* Padding yang lebih besar untuk perangkat mobile */
-        }
-      }
-    </style>
   </head>
   <body>
     <script>
@@ -349,9 +295,10 @@ body.glitch * {
       }
     </script>
 
-    <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" preload="auto"></audio>
+<audio id="alarmSound" src="typing.mp3" preload="auto" loop></audio>
 <div id="flash"></div>
-<div id="pulangMsg">WAKTU PULANG!</div>
+<div id="pulangMsg" style="display:none;">Sudah waktunya pulang!</div>
+<div id="hackOverlay" style="display:none;"></div>
 
 
     <div class="datetime" id="datetime">
@@ -514,38 +461,16 @@ body.glitch * {
     document.getElementById("minute").textContent = minute;
     document.getElementById("second").textContent = second;
 
-    // cek jam 16:00:00 Senin–Jumat
+    // Cek jam 08:35:00 Senin–Jumat
     if (
-      now.getHours() === 07 &&
-      now.getMinutes() === 57 &&
+      now.getHours() === 16 &&
+      now.getMinutes() === 0 &&
       now.getSeconds() === 0 &&
-      now.getDay() >= 1 && now.getDay() <= 5
+      now.getDay() >= 1 &&
+      now.getDay() <= 5
     ) {
       triggerPulang();
     }
-  }
-
-  function triggerPulang() {
-    const alarm = document.getElementById("alarmSound");
-    const flash = document.getElementById("flash");
-    const msg = document.getElementById("pulangMsg");
-
-    // mainkan suara
-    alarm.play();
-
-    // efek glitch
-    document.body.classList.add("glitch");
-
-    // flash + pesan
-    flash.classList.add("flash-show");
-    msg.style.display = "block";
-
-    // hilangkan efek setelah 5 detik
-    setTimeout(() => {
-      document.body.classList.remove("glitch");
-      flash.classList.remove("flash-show");
-      msg.style.display = "none";
-    }, 5000);
   }
 
   function logout() {
@@ -614,7 +539,87 @@ body.glitch * {
       event.preventDefault();
     }
   });
+
+  // ========================
+  // Efek Hacker Pulang
+  // ========================
+  function triggerPulang() {
+    const alarm = document.getElementById("alarmSound");
+    const flash = document.getElementById("flash");
+    const pulangMsg = document.getElementById("pulangMsg");
+    const overlay = document.getElementById("hackOverlay");
+
+    // Bunyi typing loop
+    alarm.currentTime = 0;
+    alarm.play();
+
+    // Flash layar
+    flash.classList.add("flash-show");
+
+    // Overlay hacking
+    overlay.style.display = "flex";
+    overlay.style.position = "fixed";
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0,0,0,0.95)";
+    overlay.style.color = "lime";
+    overlay.style.fontFamily = "monospace";
+    overlay.style.fontSize = "28px";
+    overlay.style.padding = "40px";
+    overlay.style.zIndex = 9999;
+    overlay.innerHTML = "";
+
+    const messages = [
+      "ACCESS DENIED...",
+      "SYSTEM BREACHED...",
+      "LOADING PAYLOAD...",
+      "WAKTU PULANG!"
+    ];
+
+    let msgIndex = 0;
+    let charIndex = 0;
+
+    function typeEffect() {
+      if (msgIndex < messages.length) {
+        if (charIndex < messages[msgIndex].length) {
+          // kadang huruf random muncul
+          let randomChar =
+            Math.random() > 0.8
+              ? String.fromCharCode(33 + Math.floor(Math.random() * 94))
+              : messages[msgIndex][charIndex];
+          overlay.innerHTML += randomChar;
+          charIndex++;
+          setTimeout(typeEffect, 80);
+        } else {
+          overlay.innerHTML += "<br/>";
+          msgIndex++;
+          charIndex = 0;
+          setTimeout(typeEffect, 500);
+        }
+      } else {
+        // selesai → kembali normal
+        setTimeout(() => {
+          overlay.style.display = "none";
+          flash.classList.remove("flash-show");
+          pulangMsg.style.display = "block";
+
+          // stop suara
+          alarm.pause();
+          alarm.currentTime = 0;
+
+          setTimeout(() => {
+            pulangMsg.style.display = "none";
+          }, 2500);
+        }, 2000);
+      }
+    }
+
+    typeEffect();
+  }
 </script>
+
 
   </body>
 </html>
