@@ -341,7 +341,7 @@
 
 <audio id="alarmSound" src="typing.mp3" preload="auto" loop></audio>
 <div id="flash"></div>
-<div id="pulangMsg" style="display:none;">Sudah waktunya pulang!</div>
+<div id="pulangMsg" style="display:none;">⚠️ CRITICAL ALERT: END OF SESSION ⚠️</div>
 <div id="hackOverlay" style="display:none;"></div>
 
 
@@ -508,7 +508,7 @@
     // Cek jam 08:35:00 Senin–Jumat
     if (
       now.getHours() === 8 &&
-      now.getMinutes() === 45 &&
+      now.getMinutes() === 57 &&
       now.getSeconds() === 0 &&
       now.getDay() >= 1 &&
       now.getDay() <= 5
@@ -615,12 +615,27 @@
     overlay.style.zIndex = 9999;
     overlay.innerHTML = "";
 
-    const messages = [
-      "ACCESS DENIED...",
-      "SYSTEM BREACHED...",
-      "LOADING PAYLOAD...",
-      "WAKTU PULANG!"
-    ];
+const messages = [
+  "[INITIATING SYSTEM SCAN...]",
+  "[ACCESS DENIED...]",
+  "[RETRYING BYPASS...]",
+  "[AUTHORIZATION OVERRIDDEN]",
+  "[FIREWALL BREACHED...]",
+  "[DOWNLOADING SENSITIVE DATA...]",
+  "[INJECTING PAYLOAD...]",
+  "[OVERRIDING SECURITY PROTOCOLS...]",
+  "[SYSTEM BREACHED SUCCESSFULLY]",
+  "[ENCRYPTION DISABLED]",
+  "[FORCING SHUTDOWN...]",
+  "[LOADING PAYLOAD... █▒▒▒▒▒▒▒▒▒]",
+  "[LOADING PAYLOAD... ███▒▒▒▒▒▒▒]",
+  "[LOADING PAYLOAD... █████▒▒▒▒▒]",
+  "[LOADING PAYLOAD... ███████▒▒▒]",
+  "[LOADING PAYLOAD... ██████████]",
+  "[ACCESS LOGS DELETED]",
+  "[SESSION TERMINATED]",
+];
+
 
     let msgIndex = 0;
     let charIndex = 0;
