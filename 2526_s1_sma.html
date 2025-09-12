@@ -239,21 +239,65 @@
   }
   .download-button-2:hover { background-color: #0056b3; transform: translateY(-2px); }
 
-  /* Responsive */
-  @media (max-width: 768px) {
-    .box { width: 100%; margin: 10px 0; }
+            .search-container {
+        margin-bottom: 10px;
+      }
 
-    .datetime { height: auto; padding: 20px; }
+      .search-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
 
-    .logout-button,
-    .download-button,
-    .download-button-2 {
-      width: 30px;
-      height: 100px;
-      font-size: 14px;
-      border-radius: 5px;
-    }
-  }
+   /* Responsive styles */
+      @media (max-width: 768px) {
+        .logout-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 5px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .download-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 40px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .download-button-2 {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 75px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .box {
+          width: 100%;
+          max-width: none;
+          margin: 10px 0; /* Add vertical spacing between boxes */
+        }
+
+        .datetime {
+          height: auto; /* Sesuaikan tinggi berdasarkan konten */
+          padding: 20px; /* Padding yang lebih besar untuk perangkat mobile */
+        }
+      }
 </style>
 
   </head>
@@ -326,7 +370,7 @@
       <div class="box">
         <h1>GSheet Penilaian</h1>
         <div class="search-container">
-          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('penilaian', this.value)" />
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('absensi', this.value)" />
         </div>
         <div class="button-container" id="penilaian">
           <a href="https://docs.google.com/spreadsheets/d/1Z0B4X5fwjVdOfr63CtRnmVhUU76XglxUwhbZrNpGb3E/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_10A_SMA</a>
@@ -463,8 +507,8 @@
 
     // Cek jam 08:35:00 Senin–Jumat
     if (
-      now.getHours() === 08 &&
-      now.getMinutes() === 38 &&
+      now.getHours() === 8 &&
+      now.getMinutes() === 45 &&
       now.getSeconds() === 0 &&
       now.getDay() >= 1 &&
       now.getDay() <= 5
