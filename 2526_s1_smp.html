@@ -6,199 +6,240 @@
     <title>KuLi-SMP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
-      body {
-        font-family: "Poppins", sans-serif;
-        background-color: #f3f4f6;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        overflow-x: hidden; /* Prevent horizontal scroll */
-      }
+  /* === HACK EFFECT === */
+  body.glitch {
+    background: black !important;
+    color: lime !important;
+    font-family: monospace !important;
+  }
 
-      .container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 1500px;
-        padding: 20px;
-        box-sizing: border-box;
-        overflow-y: auto;
-        margin-top: 100px; /* Add margin-top to avoid overlap with datetime section */
-      }
+  /* semua teks berubah neon hijau + flicker */
+  body.glitch * {
+    background: transparent !important;
+    color: lime !important;
+    text-shadow: 0 0 5px lime, 0 0 10px green;
+    border: none !important;
+    animation: flicker 1s infinite alternate;
+  }
 
-      .box {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        flex: 1;
-        margin: 0 10px;
-        box-sizing: border-box;
-        min-width: 250px;
-      }
+  /* efek flicker monitor rusak */
+  @keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
 
-      .box h1 {
-        margin-bottom: 20px;
-        color: #333;
-        font-size: 24px;
-        font-weight: 600;
-      }
+  /* teks hack palsu muncul */
+  .hack-text {
+    font-size: 18px;
+    color: lime;
+    font-family: monospace;
+    white-space: pre-wrap;
+    margin: 10px;
+    animation: typewriter 3s steps(40) 1;
+    overflow: hidden;
+    border-right: 2px solid lime;
+  }
 
-      .button-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        justify-content: center;
-        max-height: 345px;
-        overflow-y: auto;
-      }
+  /* animasi mengetik */
+  @keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+  }
 
-      .button {
-        padding: 10px 15px;
-        font-size: 14px;
-        color: #ffffff;
-        background-color: #007bff;
-        text-decoration: none;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
-        text-align: center;
-        display: block;
-      }
+  /* === FLASH EFFECT === */
+  #flash {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: white;
+    opacity: 0;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .flash-show {
+    animation: flashAnim 1s forwards;
+  }
+  @keyframes flashAnim {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+  }
 
-      .button:hover {
-        background-color: #0056b3;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-      }
+  /* teks besar penanda pulang */
+  #pulangMsg {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    font-weight: bold;
+    color: red;
+    background: black;
+    padding: 20px 40px;
+    border-radius: 12px;
+    z-index: 10000;
+    display: none;
+  }
 
-      .datetime {
-        position: fixed; /* Use fixed positioning */
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 90px; /* Adjust height if needed */
-        background-color: #ffffff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        box-sizing: border-box;
-        z-index: 1000; /* Ensure it's on top */
-      }
+  /* === LAYOUT UTAMA === */
+  body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
 
-      .datetime .date {
-        font-size: 14px;
-        text-align: center;
-        margin-bottom: 10px;
-      }
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1500px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-top: 100px; /* avoid overlap with datetime */
+  }
 
-      .time-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
+  .box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+    box-sizing: border-box;
+    min-width: 250px;
+  }
 
-      .time-box {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f1f1f1;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
+  .box h1 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+  }
 
-      .separator {
-        font-size: 18px;
-        color: #333;
-      }
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    max-height: 345px;
+    overflow-y: auto;
+  }
 
-      .logout-button {
-        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
-        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
-        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
-        color: #ffffff;
-        background-color: #dc3545;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
-        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
-        right: 5px; /* Atur jarak dari kanan untuk perangkat mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
-      }
+  .button {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    display: block;
+  }
 
-      .logout-button:hover {
-        background-color: #c82333;
-        transform: translateY(-2px);
-      }
+  .button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
 
-        .download-button {
-        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
-        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
-        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
-        color: #ffffff;
-        background-color: #28a745;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
-        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
-        right: 40px; /* Atur jarak dari kanan untuk perangkat mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
-      }
+  .datetime {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
 
-      .download-button:hover {
-        background-color: #28a745;
-        transform: translateY(-2px);
-      }
+  .datetime .date {
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 
-            .download-button-2 {
-        width: 30px; /* Atur lebar tombol lebih besar untuk tampilan mobile */
-        height: 80px; /* Atur tinggi tombol lebih besar untuk tampilan mobile */
-        font-size: 14px; /* Ukuran font lebih kecil di perangkat mobile */
-        color: #ffffff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-        position: fixed; /* Gunakan fixed positioning untuk mobile juga */
-        top: 5px; /* Atur jarak dari bawah untuk perangkat mobile */
-        right: 75px; /* Atur jarak dari kanan untuk perangkat mobile */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000; /* Pastikan tombol tetap di atas konten lainnya */
-      }
+  .time-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 
-      .download-button-2:hover {
-        background-color: #007bff;
-        transform: translateY(-2px);
-      }
+  .time-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f1f1;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-      .search-container {
+  .separator {
+    font-size: 18px;
+    color: #333;
+  }
+
+  /* tombol logout dan download */
+  .logout-button,
+  .download-button,
+  .download-button-2 {
+    width: 30px;
+    height: 80px;
+    font-size: 14px;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    position: fixed;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .logout-button {
+    background-color: #dc3545;
+    right: 5px;
+  }
+  .logout-button:hover { background-color: #c82333; transform: translateY(-2px); }
+
+  .download-button {
+    background-color: #28a745;
+    right: 40px;
+  }
+  .download-button:hover { background-color: #218838; transform: translateY(-2px); }
+
+  .download-button-2 {
+    background-color: #007bff;
+    right: 75px;
+  }
+  .download-button-2:hover { background-color: #0056b3; transform: translateY(-2px); }
+
+            .search-container {
         margin-bottom: 10px;
       }
 
@@ -211,9 +252,9 @@
         box-sizing: border-box;
       }
 
-      /* Responsive styles */
+   /* Responsive styles */
       @media (max-width: 768px) {
-        .logout-button{
+        .logout-button {
           width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
@@ -235,7 +276,7 @@
           height: 100px;
         }
 
-                .download-button-2 {
+        .download-button-2 {
           width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
@@ -257,7 +298,8 @@
           padding: 20px; /* Padding yang lebih besar untuk perangkat mobile */
         }
       }
-    </style>
+</style>
+
   </head>
   <body>
     <script>
@@ -297,6 +339,12 @@
       }
     </script>
 
+<audio id="alarmSound" src="typing.mp3" preload="auto" loop></audio>
+<div id="flash"></div>
+<div id="pulangMsg" style="display:none;">⚠️ CRITICAL ALERT: END OF SESSION ⚠️</div>
+<div id="hackOverlay" style="display:none;"></div>
+
+
     <div class="datetime" id="datetime">
       <div class="date" id="date"></div>
       <div class="time-container">
@@ -313,7 +361,7 @@
         </button>
         <button class="download-button-2" onclick="downloadDocument2()" title="Excel TDU">
           <i class="fas fa-download"></i>
-        
+        </button>
       </div>
     </div>
 
@@ -424,11 +472,13 @@
           <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('absensi', this.value)" />
         </div>
         <div class="button-container" id="absensi">
+            
           <a href="https://docs.google.com/spreadsheets/d/1QGjDMQcGv-wnKyIqNO4gI18MU62IRcwxJQ0xZPIun3c/edit?usp=sharing" class="button" target="_blank">7A_SMP</a>
           <a href="https://docs.google.com/spreadsheets/d/1_S21M2IZ0xUhZgqXKBZ5zrPLkuR5nVbTHLccrvkYcz8/edit?usp=sharing" class="button" target="_blank">8A_SMP</a>
           <a href="https://docs.google.com/spreadsheets/d/1s1qynYQChLqF-yn5n1JbcbjTQRbc57EYzlncW-plnqM/edit?usp=sharing" class="button" target="_blank">8B_SMP</a>
           <a href="https://docs.google.com/spreadsheets/d/1TDRjLP2Wzm_C4uqCQkFbj4C-iwMrXPy_0SadU0v4zcQ/edit?usp=sharing" class="button" target="_blank">9A_SMP</a>
           <a href="https://docs.google.com/spreadsheets/d/1vKDwgRfp63fuzRFHuUoogEEFNu2XXHSmsXM69UGc3hQ/edit?usp=sharing" class="button" target="_blank">9B_SMP</a>
+
           <!-- Add more links as needed -->
         </div>
       </div>
@@ -442,15 +492,6 @@
         <div class="button-container" id="ledger">
           <a href="2526_s1_mlsmp.html" class="button" target="_blank">ML_Predik_SMP</a>
           <a href="https://docs.google.com/spreadsheets/d/1rkQbARCPP8DU0Gxt64od6TdGyrzYHelafY0UTkwoIN0/edit?usp=sharing.html" class="button" target="_blank">ALL_SMP</a>
-          <!--
-          <a href="coming.html" class="button" target="_blank">7A</a>
-          <a href="coming.html" class="button" target="_blank">7B</a>
-          <a href="coming.html" class="button" target="_blank">8A</a>
-          <a href="coming.html" class="button" target="_blank">8B</a>
-          <a href="coming.html" class="button" target="_blank">LEDGER SMP</a>
-          <a href="coming.html" class="button" target="_blank">RAPOR SMP</a>
-          -->
-                    
           <!-- Add more links as needed -->
         </div>
       </div>
@@ -462,104 +503,205 @@
           <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('dataMaster', this.value)" />
         </div>
         <div class="button-container" id="dataMaster">
-          <a href="https://docs.google.com/spreadsheets/d/1-AgkE4_DFzwEtaNAeM-BeECpd1ojI5Z2nmVRGK0SkJM/edit?usp=sharing" class="button" target="_blank">MASTER_SMP</a>
-          <!--
-          <a href="coming.html" class="button" target="_blank">P5 7A</a>
-          <a href="coming.html" class="button" target="_blank">P5 7B</a>
-          <a href="coming.html" class="button" target="_blank">P5 8A</a>
-          <a href="coming.html" class="button" target="_blank">P5 8B</a>
-          -->
+            <a href="https://docs.google.com/spreadsheets/d/1-AgkE4_DFzwEtaNAeM-BeECpd1ojI5Z2nmVRGK0SkJM/edit?usp=sharing" class="button" target="_blank">MASTER_SMP</a>
           <!-- Add more links as needed -->
         </div>
       </div>
     </div>
 
     <script>
-      function updateDateTime() {
-        const now = new Date();
-        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  function updateDateTime() {
+    const now = new Date();
+    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-        const dayName = days[now.getDay()];
-        const monthName = months[now.getMonth()];
-        const day = now.getDate();
-        const year = now.getFullYear();
-        const hour = String(now.getHours()).padStart(2, "0");
-        const minute = String(now.getMinutes()).padStart(2, "0");
-        const second = String(now.getSeconds()).padStart(2, "0");
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const day = now.getDate();
+    const year = now.getFullYear();
+    const hour = String(now.getHours()).padStart(2, "0");
+    const minute = String(now.getMinutes()).padStart(2, "0");
+    const second = String(now.getSeconds()).padStart(2, "0");
 
-        document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
-        document.getElementById("hour").textContent = hour;
-        document.getElementById("minute").textContent = minute;
-        document.getElementById("second").textContent = second;
+    document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
+    document.getElementById("hour").textContent = hour;
+    document.getElementById("minute").textContent = minute;
+    document.getElementById("second").textContent = second;
+
+    // Cek jam 08:35:00 Senin–Jumat
+    if (
+      now.getHours() === 16 &&
+      now.getMinutes() === 0 &&
+      now.getSeconds() === 0 &&
+      now.getDay() >= 1 &&
+      now.getDay() <= 5
+    ) {
+      triggerPulang();
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem("accessGranted"); // Clear the access flag
+    window.location.href = "/"; // Redirect to the base URL
+  }
+
+  function filterButtons(containerId, searchTerm) {
+    const container = document.getElementById(containerId);
+    const buttons = container.getElementsByClassName("button");
+    for (let button of buttons) {
+      if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+        button.style.display = "block";
+      } else {
+        button.style.display = "none";
       }
+    }
+  }
 
-      function logout() {
-        sessionStorage.removeItem("accessGranted"); // Clear the access flag
-        window.location.href = "/"; // Redirect to the base URL
-      }
+  // Disable right-click context menu
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+  });
 
-      function filterButtons(containerId, searchTerm) {
-        const container = document.getElementById(containerId);
-        const buttons = container.getElementsByClassName("button");
-        for (let button of buttons) {
-          if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
-            button.style.display = "block";
-          } else {
-            button.style.display = "none";
-          }
-        }
-      }
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "u") {
+      event.preventDefault();
+    }
+  });
 
-      // Disable right-click context menu
-      document.addEventListener("contextmenu", function (event) {
-        event.preventDefault();
-      });
+  document.addEventListener("keydown", function (event) {
+    // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
+    if (event.ctrlKey && event.shiftKey && event.key === "I") {
+      event.preventDefault();
+    }
 
-      document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "u") {
-          event.preventDefault();
-        }
-      });
+    // Prevent F12 (DevTools)
+    if (event.key === "F12") {
+      event.preventDefault();
+    }
+  });
 
-      document.addEventListener("keydown", function (event) {
-        // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
-        if (event.ctrlKey && event.shiftKey && event.key === "I") {
-          event.preventDefault();
-        }
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
 
-        // Prevent F12 (DevTools)
-        if (event.key === "F12") {
-          event.preventDefault();
-        }
-      });
+  function downloadDocument() {
+    const link = document.createElement("a");
+    link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
+    link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
-      updateDateTime();
-      setInterval(updateDateTime, 1000);
+  function downloadDocument2() {
+    const link = document.createElement("a");
+    link.href = "TDU_SMA_2526_S1.xlsx"; // Path to the Excel file
+    link.download = "TDU_SMA_2526_S1.xlsx"; // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
-      function downloadDocument() {
-        const link = document.createElement("a");
-        link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
-        link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-            function downloadDocument2() {
-        const link = document.createElement("a");
-        link.href = "TDU_SMP_2526_S1.xlsx"; // Path to the PDF file
-        link.download = "TDU_SMP_2526_S1.xlsx"; // File name
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      document.addEventListener("keydown", function(event) {
+  document.addEventListener("keydown", function (event) {
     if (event.ctrlKey && event.key === "s") {
       event.preventDefault();
     }
   });
-    </script>
+
+  // ========================
+  // Efek Hacker Pulang
+  // ========================
+  function triggerPulang() {
+    const alarm = document.getElementById("alarmSound");
+    const flash = document.getElementById("flash");
+    const pulangMsg = document.getElementById("pulangMsg");
+    const overlay = document.getElementById("hackOverlay");
+
+    // Bunyi typing loop
+    alarm.currentTime = 0;
+    alarm.play();
+
+    // Flash layar
+    flash.classList.add("flash-show");
+
+    // Overlay hacking
+    overlay.style.display = "flex";
+    overlay.style.position = "fixed";
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0,0,0,0.95)";
+    overlay.style.color = "lime";
+    overlay.style.fontFamily = "monospace";
+    overlay.style.fontSize = "28px";
+    overlay.style.padding = "40px";
+    overlay.style.zIndex = 9999;
+    overlay.innerHTML = "";
+
+const messages = [
+  "[INITIATING SYSTEM SCAN...]",
+  "[ACCESS DENIED...]",
+  "[RETRYING BYPASS...]",
+  "[AUTHORIZATION OVERRIDDEN]",
+  "[FIREWALL BREACHED...]",
+  "[DOWNLOADING SENSITIVE DATA...]",
+  "[INJECTING PAYLOAD...]",
+  "[OVERRIDING SECURITY PROTOCOLS...]",
+  "[SYSTEM BREACHED SUCCESSFULLY]",
+  "[ENCRYPTION DISABLED]",
+  "[FORCING SHUTDOWN...]",
+  "[LOADING PAYLOAD... █▒▒▒▒▒▒▒▒▒]",
+  "[LOADING PAYLOAD... ███▒▒▒▒▒▒▒]",
+  "[LOADING PAYLOAD... █████▒▒▒▒▒]",
+  "[LOADING PAYLOAD... ███████▒▒▒]",
+  "[LOADING PAYLOAD... ██████████]",
+  "[ACCESS LOGS DELETED]",
+  "[SESSION TERMINATED]",
+];
+
+
+    let msgIndex = 0;
+    let charIndex = 0;
+
+    function typeEffect() {
+      if (msgIndex < messages.length) {
+        if (charIndex < messages[msgIndex].length) {
+          // kadang huruf random muncul
+          let randomChar =
+            Math.random() > 0.8
+              ? String.fromCharCode(33 + Math.floor(Math.random() * 94))
+              : messages[msgIndex][charIndex];
+          overlay.innerHTML += randomChar;
+          charIndex++;
+          setTimeout(typeEffect, 80);
+        } else {
+          overlay.innerHTML += "<br/>";
+          msgIndex++;
+          charIndex = 0;
+          setTimeout(typeEffect, 500);
+        }
+      } else {
+        // selesai → kembali normal
+        setTimeout(() => {
+          overlay.style.display = "none";
+          flash.classList.remove("flash-show");
+          pulangMsg.style.display = "block";
+
+          // stop suara
+          alarm.pause();
+          alarm.currentTime = 0;
+
+          setTimeout(() => {
+            pulangMsg.style.display = "none";
+          }, 2500);
+        }, 2000);
+      }
+    }
+
+    typeEffect();
+  }
+</script>
+
+
   </body>
 </html>
