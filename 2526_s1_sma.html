@@ -8,6 +8,58 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
+      /* efek glitch halaman */
+body.glitch * {
+  animation: glitchAnim 0.3s infinite;
+  text-shadow: 2px 2px red, -2px -2px blue;
+  background: black !important;
+  color: lime !important;
+}
+
+      @keyframes glitchAnim {
+  0% { transform: skew(0deg); }
+  20% { transform: skew(5deg); }
+  40% { transform: skew(-5deg); }
+  60% { transform: skew(3deg); }
+  80% { transform: skew(-3deg); }
+  100% { transform: skew(0deg); }
+}
+
+      /* layer flash ledakan */
+#flash {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: white;
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+.flash-show {
+  animation: flashAnim 1s forwards;
+}
+@keyframes flashAnim {
+  0% { opacity: 1; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* teks besar penanda pulang */
+#pulangMsg {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  font-weight: bold;
+  color: red;
+  background: black;
+  padding: 20px 40px;
+  border-radius: 12px;
+  z-index: 10000;
+  display: none;
+}
+      
+
       body {
         font-family: "Poppins", sans-serif;
         background-color: #f3f4f6;
@@ -297,6 +349,11 @@
       }
     </script>
 
+    <audio id="alarmSound" src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" preload="auto"></audio>
+<div id="flash"></div>
+<div id="pulangMsg">WAKTU PULANG!</div>
+
+
     <div class="datetime" id="datetime">
       <div class="date" id="date"></div>
       <div class="time-container">
@@ -439,91 +496,125 @@
     </div>
 
     <script>
-      function updateDateTime() {
-        const now = new Date();
-        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+  function updateDateTime() {
+    const now = new Date();
+    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
-        const dayName = days[now.getDay()];
-        const monthName = months[now.getMonth()];
-        const day = now.getDate();
-        const year = now.getFullYear();
-        const hour = String(now.getHours()).padStart(2, "0");
-        const minute = String(now.getMinutes()).padStart(2, "0");
-        const second = String(now.getSeconds()).padStart(2, "0");
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const day = now.getDate();
+    const year = now.getFullYear();
+    const hour = String(now.getHours()).padStart(2, "0");
+    const minute = String(now.getMinutes()).padStart(2, "0");
+    const second = String(now.getSeconds()).padStart(2, "0");
 
-        document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
-        document.getElementById("hour").textContent = hour;
-        document.getElementById("minute").textContent = minute;
-        document.getElementById("second").textContent = second;
+    document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
+    document.getElementById("hour").textContent = hour;
+    document.getElementById("minute").textContent = minute;
+    document.getElementById("second").textContent = second;
+
+    // cek jam 16:00:00 Senin–Jumat
+    if (
+      now.getHours() === 07 &&
+      now.getMinutes() === 57 &&
+      now.getSeconds() === 0 &&
+      now.getDay() >= 1 && now.getDay() <= 5
+    ) {
+      triggerPulang();
+    }
+  }
+
+  function triggerPulang() {
+    const alarm = document.getElementById("alarmSound");
+    const flash = document.getElementById("flash");
+    const msg = document.getElementById("pulangMsg");
+
+    // mainkan suara
+    alarm.play();
+
+    // efek glitch
+    document.body.classList.add("glitch");
+
+    // flash + pesan
+    flash.classList.add("flash-show");
+    msg.style.display = "block";
+
+    // hilangkan efek setelah 5 detik
+    setTimeout(() => {
+      document.body.classList.remove("glitch");
+      flash.classList.remove("flash-show");
+      msg.style.display = "none";
+    }, 5000);
+  }
+
+  function logout() {
+    sessionStorage.removeItem("accessGranted"); // Clear the access flag
+    window.location.href = "/"; // Redirect to the base URL
+  }
+
+  function filterButtons(containerId, searchTerm) {
+    const container = document.getElementById(containerId);
+    const buttons = container.getElementsByClassName("button");
+    for (let button of buttons) {
+      if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+        button.style.display = "block";
+      } else {
+        button.style.display = "none";
       }
+    }
+  }
 
-      function logout() {
-        sessionStorage.removeItem("accessGranted"); // Clear the access flag
-        window.location.href = "/"; // Redirect to the base URL
-      }
+  // Disable right-click context menu
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+  });
 
-      function filterButtons(containerId, searchTerm) {
-        const container = document.getElementById(containerId);
-        const buttons = container.getElementsByClassName("button");
-        for (let button of buttons) {
-          if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
-            button.style.display = "block";
-          } else {
-            button.style.display = "none";
-          }
-        }
-      }
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "u") {
+      event.preventDefault();
+    }
+  });
 
-      // Disable right-click context menu
-      document.addEventListener("contextmenu", function (event) {
-        event.preventDefault();
-      });
+  document.addEventListener("keydown", function (event) {
+    // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
+    if (event.ctrlKey && event.shiftKey && event.key === "I") {
+      event.preventDefault();
+    }
 
-      document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "u") {
-          event.preventDefault();
-        }
-      });
+    // Prevent F12 (DevTools)
+    if (event.key === "F12") {
+      event.preventDefault();
+    }
+  });
 
-      document.addEventListener("keydown", function (event) {
-        // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
-        if (event.ctrlKey && event.shiftKey && event.key === "I") {
-          event.preventDefault();
-        }
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
 
-        // Prevent F12 (DevTools)
-        if (event.key === "F12") {
-          event.preventDefault();
-        }
-      });
+  function downloadDocument() {
+    const link = document.createElement("a");
+    link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
+    link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
-      updateDateTime();
-      setInterval(updateDateTime, 1000);
+  function downloadDocument2() {
+    const link = document.createElement("a");
+    link.href = "TDU_SMA_2526_S1.xlsx"; // Path to the Excel file
+    link.download = "TDU_SMA_2526_S1.xlsx"; // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
-      function downloadDocument() {
-        const link = document.createElement("a");
-        link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
-        link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "s") {
+      event.preventDefault();
+    }
+  });
+</script>
 
-      function downloadDocument2() {
-        const link = document.createElement("a");
-        link.href = "TDU_SMA_2526_S1.xlsx"; // Path to the PDF file
-        link.download = "TDU_SMA_2526_S1.xlsx"; // File name
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      document.addEventListener("keydown", function (event) {
-        if (event.ctrlKey && event.key === "s") {
-          event.preventDefault();
-        }
-      });
-    </script>
   </body>
 </html>
