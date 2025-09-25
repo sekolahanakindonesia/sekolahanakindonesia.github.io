@@ -143,6 +143,11 @@
       return text.charAt(0).toUpperCase() + text.slice(1);
     }
 
+    function rataRataValid(arr) {
+      const valid = arr.filter(v => v > 0); // hanya nilai > 0
+      return valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : 0;
+    }
+
     async function fetchData() {
       const res = await fetch(SHEET_URL);
       const data = await res.json();
@@ -278,15 +283,17 @@
             for (const kategori of kategoriList) {
               const data = nilaiTP[tp][kategori];
               if (!data) continue;
-              const r = data.real.length ? data.real.reduce((a,b)=>a+b,0)/data.real.length : 0;
-              const m = data.remedial.length ? data.remedial.reduce((a,b)=>a+b,0)/data.remedial.length : 0;
-              const p = data.pengayaan.length ? data.pengayaan.reduce((a,b)=>a+b,0)/data.pengayaan.length : 0;
+              const r = rataRataValid(data.real);
+              const m = rataRataValid(data.remedial);
+              const p = rataRataValid(data.pengayaan);
               const hasil = nilaiAkhir(r, m, p, kkm);
               if (hasil > 0) nilaiPerKategori[kategori].push(hasil);
             }
           }
-          const nilaiRapor = kategoriList.map(k => nilaiPerKategori[k].length ? nilaiPerKategori[k].reduce((a,b)=>a+b,0)/nilaiPerKategori[k].length : 0);
-          const raporFinal = nilaiRapor.filter(v => v > 0).length ? Math.round(nilaiRapor.reduce((a,b)=>a+b,0)/nilaiRapor.filter(v => v>0).length) : 0;
+          const nilaiRapor = kategoriList.map(k => rataRataValid(nilaiPerKategori[k]));
+          const raporFinal = nilaiRapor.filter(v => v > 0).length 
+              ? Math.round(nilaiRapor.reduce((a,b)=>a+b,0) / nilaiRapor.filter(v => v>0).length) 
+              : 0;
           const raporClass = parseFloat(raporFinal) < kkm ? 'red-bold' : '';
           tbody.append(`<tr>
             <td>${no++}</td>
@@ -304,9 +311,9 @@
             const rowNilai = [];
             for (const kategori of kategoriList) {
               const d = nilaiMateri[materi][kategori] || { real: [], remedial: [], pengayaan: [] };
-              const r = d.real.length ? Math.round(d.real.reduce((a,b)=>a+b,0)/d.real.length) : 0;
-              const m = d.remedial.length ? Math.round(d.remedial.reduce((a,b)=>a+b,0)/d.remedial.length) : 0;
-              const p = d.pengayaan.length ? Math.round(d.pengayaan.reduce((a,b)=>a+b,0)/d.pengayaan.length) : 0;
+              const r = Math.round(rataRataValid(d.real));
+              const m = Math.round(rataRataValid(d.remedial));
+              const p = Math.round(rataRataValid(d.pengayaan));
               const hasilAkhir = Math.round(nilaiAkhir(r, m, p, kkm));
 
               const rClass = parseFloat(r) < kkm ? 'red-bold' : '';
