@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KuLi-ML-SD</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,7 +42,7 @@
     }
 
     td:first-child, th:first-child,
-    td:nth-child(2), th:nth-child(2), 
+    td:nth-child(2), th:nth-child(2),
     td:nth-child(3), th:nth-child(3) {
       position: sticky;
       left: 0;
@@ -76,6 +76,18 @@
       font-weight: bold;
     }
 
+    #loading {
+      display: none;
+      font-weight: bold;
+      color: #333;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 8px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      width: fit-content;
+    }
+
     @media (max-width: 768px) {
       label, select, button {
         display: block;
@@ -93,9 +105,9 @@
       }
     }
   </style>
-
 </head>
 <body>
+
 <script>
   if (localStorage.getItem("izinRapor") !== "ya") {
     alert("Akses ditolak. Silakan buka halaman KuLi unit.");
@@ -106,6 +118,7 @@
 </script>
 
   <h2>Prediksi Nilai Rapor SD - ML</h2>
+  <div id="loading">⏳ Memuat data...</div>
 
   <label for="kelasFilter">Pilih Kelas:</label>
   <select id="kelasFilter">
@@ -124,16 +137,17 @@
 
   <button id="refreshBtn">🔄 Refresh Data</button>
 
-  <table id="tabelLaporan">
-    <thead>
-      <tr id="headerRow"></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="table-container">
+    <table id="tabelLaporan">
+      <thead><tr id="headerRow"></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 
   <script>
     const SHEET_URL = 'https://opensheet.elk.sh/1tn_jqAjvxnoTow_ZTJGeRRs89g2baPPjYkAjMnoIZ88/Sheet1';
     let dataMentah = [];
+    let cacheWaktu = 0;
 
     function getKategoriList(isRaporMode) {
       return isRaporMode ? ['skill', 'teori', 'nalar'] : ['skill', 'teori', 'nalar', 'karakter', 'minat'];
@@ -144,16 +158,28 @@
     }
 
     function rataRataValid(arr) {
-      const valid = arr.filter(v => v > 0); // hanya nilai > 0
+      const valid = arr.filter(v => v > 0);
       return valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : 0;
     }
 
-    async function fetchData() {
+    async function fetchData(force = false) {
+      $('#loading').show();
+      const sekarang = Date.now();
+
+      // cache 5 menit
+      if (!force && dataMentah.length && (sekarang - cacheWaktu < 5 * 60 * 1000)) {
+        renderTabel();
+        $('#loading').hide();
+        return;
+      }
+
       const res = await fetch(SHEET_URL);
       const data = await res.json();
       dataMentah = data;
+      cacheWaktu = sekarang;
       inisialisasiFilter(data);
       renderTabel();
+      $('#loading').hide();
     }
 
     function inisialisasiFilter(data) {
@@ -198,7 +224,7 @@
     });
 
     $('#refreshBtn').on('click', function () {
-      fetchData();
+      fetchData(true);
     });
 
     function nilaiAkhir(real, remedial, pengayaan, kkm) {
@@ -248,17 +274,21 @@
       }
 
       const siswaMap = {};
-      dataMentah.forEach(row => {
-        if ((kelas && row['KELAS'] !== kelas) || (mapel && row['MAPEL'] !== mapel)) return;
-        if (materi && row['KETERANGAN MATERI'] !== materi) return;
+      const filtered = dataMentah.filter(row =>
+        (!kelas || row['KELAS'] === kelas) &&
+        (!mapel || row['MAPEL'] === mapel) &&
+        (!materi || row['KETERANGAN MATERI'] === materi)
+      );
 
+      filtered.forEach(row => {
         const nis = row['NIS'], nama = row['NAMA'], kkm = parseFloat(row['KKM']) || 0;
         const kategori = (row['KATEGORI PENILAIAN'] || '').toLowerCase();
         const tipe = (row['TIPE PENILAIAN'] || '').toLowerCase();
         const nilai = parseFloat(row['NILAI']) || 0;
         const tp = row['NO TP'];
         const key = `${nis}|${row['MAPEL']}`;
-        if (!kategoriList.includes(kategori)) return;
+        if (!getKategoriList(true).includes(kategori)) return;
+
         if (!siswaMap[key]) siswaMap[key] = { nama, kelas: row['KELAS'], kkm, mapel: row['MAPEL'], nilaiTP: {}, nilaiMateri: {} };
 
         if (isRaporMode && tp) {
@@ -274,6 +304,8 @@
       });
 
       let no = 1;
+      const rows = [];
+
       for (const key in siswaMap) {
         const { nama, kelas, kkm, mapel, nilaiTP, nilaiMateri } = siswaMap[key];
         if (isRaporMode) {
@@ -295,19 +327,9 @@
               ? Math.round(nilaiRapor.reduce((a,b)=>a+b,0) / nilaiRapor.filter(v => v>0).length) 
               : 0;
           const raporClass = parseFloat(raporFinal) < kkm ? 'red-bold' : '';
-          tbody.append(`<tr>
-            <td>${no++}</td>
-            <td>${key.split('|')[0]}</td>
-            <td class="text-left">${nama}</td>
-            <td>${kelas}</td>
-            <td>${kkm}</td>
-            <td class="text-left">${mapel}</td>
-            <td class="${raporClass}">${raporFinal}</td>
-          </tr>`);
-
+          rows.push(`<tr><td>${no++}</td><td>${key.split('|')[0]}</td><td class="text-left">${nama}</td><td>${kelas}</td><td>${kkm}</td><td class="text-left">${mapel}</td><td class="${raporClass}">${raporFinal}</td></tr>`);
         } else {
           for (const materi in nilaiMateri) {
-            if ($('#materiFilter').val() && materi !== $('#materiFilter').val()) continue;
             const rowNilai = [];
             for (const kategori of kategoriList) {
               const d = nilaiMateri[materi][kategori] || { real: [], remedial: [], pengayaan: [] };
@@ -315,46 +337,31 @@
               const m = Math.round(rataRataValid(d.remedial));
               const p = Math.round(rataRataValid(d.pengayaan));
               const hasilAkhir = Math.round(nilaiAkhir(r, m, p, kkm));
-
-              const rClass = parseFloat(r) < kkm ? 'red-bold' : '';
-              const mClass = parseFloat(m) < kkm ? 'red-bold' : '';
-              const pClass = parseFloat(p) < kkm ? 'red-bold' : '';
+              const rClass = r < kkm ? 'red-bold' : '';
+              const mClass = m < kkm ? 'red-bold' : '';
+              const pClass = p < kkm ? 'red-bold' : '';
               const hasilClass = hasilAkhir < kkm ? 'red-bold' : '';
-
               rowNilai.push(
-                `<td class="${rClass}">${r}</td>` +
-                `<td class="${mClass}">${m}</td>` +
-                `<td class="${pClass}">${p}</td>` +
-                `<td class="${hasilClass}">${hasilAkhir}</td>`
+                `<td class="${rClass}">${r}</td><td class="${mClass}">${m}</td><td class="${pClass}">${p}</td><td class="${hasilClass}">${hasilAkhir}</td>`
               );
             }
-            tbody.append(`<tr><td>${no++}</td><td>${key.split('|')[0]}</td><td class="text-left">${nama}</td><td>${kelas}</td><td>${kkm}</td><td class="text-left">${mapel}</td><td class="text-left">${materi}</td>${rowNilai.join('')}</tr>`);
+            rows.push(`<tr><td>${no++}</td><td>${key.split('|')[0]}</td><td class="text-left">${nama}</td><td>${kelas}</td><td>${kkm}</td><td class="text-left">${mapel}</td><td class="text-left">${materi}</td>${rowNilai.join('')}</tr>`);
           }
         }
       }
+      tbody.html(rows.join(''));
     }
 
     fetchData();
 
-    // Disable right-click context menu
-    document.addEventListener("contextmenu", function (event) {
-      event.preventDefault();
-    });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.key === "u") {
-        event.preventDefault();
+    // Cegah klik kanan & view source
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.addEventListener("keydown", e => {
+      if ((e.ctrlKey && e.key === "u") || (e.ctrlKey && e.shiftKey && e.key === "I") || e.key === "F12") {
+        e.preventDefault();
       }
     });
-
-    document.addEventListener("keydown", function (event) {
-      if (event.ctrlKey && event.shiftKey && event.key === "I") {
-        event.preventDefault();
-      }
-      if (event.key === "F12") {
-        event.preventDefault();
-      }
-    }); 
   </script>
+
 </body>
 </html>
