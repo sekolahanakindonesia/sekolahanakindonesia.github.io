@@ -105,6 +105,8 @@
   }
 </script>
 
+  <div id="loadingInfo" style="display:none; font-weight:bold; color:blue;">⏳ Memuat data, harap tunggu...</div>
+
   <h2>Prediksi Nilai Rapor SD - ML</h2>
 
   <label for="kelasFilter">Pilih Kelas:</label>
@@ -148,13 +150,16 @@
       return valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : 0;
     }
 
-    async function fetchData() {
-      const res = await fetch(SHEET_URL);
-      const data = await res.json();
-      dataMentah = data;
-      inisialisasiFilter(data);
-      renderTabel();
-    }
+async function fetchData() {
+  $("#loadingInfo").show(); // 🔹 Tampilkan info memuat data
+  const res = await fetch(SHEET_URL);
+  const data = await res.json();
+  dataMentah = data;
+  inisialisasiFilter(data);
+  renderTabel();
+  $("#loadingInfo").hide(); // 🔹 Sembunyikan setelah selesai
+}
+
 
     function inisialisasiFilter(data) {
       const kelasSet = new Set();
