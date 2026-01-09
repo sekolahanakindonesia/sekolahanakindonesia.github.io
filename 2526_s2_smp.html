@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KuLi-SMP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+  /* === HACK EFFECT === */
+  body.glitch {
+    background: black !important;
+    color: lime !important;
+    font-family: monospace !important;
+  }
+
+  /* semua teks berubah neon hijau + flicker */
+  body.glitch * {
+    background: transparent !important;
+    color: lime !important;
+    text-shadow: 0 0 5px lime, 0 0 10px green;
+    border: none !important;
+    animation: flicker 1s infinite alternate;
+  }
+
+  /* efek flicker monitor rusak */
+  @keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  /* teks hack palsu muncul */
+  .hack-text {
+    font-size: 18px;
+    color: lime;
+    font-family: monospace;
+    white-space: pre-wrap;
+    margin: 10px;
+    animation: typewriter 3s steps(40) 1;
+    overflow: hidden;
+    border-right: 2px solid lime;
+  }
+
+  /* animasi mengetik */
+  @keyframes typewriter {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  /* === FLASH EFFECT === */
+  #flash {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: white;
+    opacity: 0;
+    z-index: 9999;
+    pointer-events: none;
+  }
+  .flash-show {
+    animation: flashAnim 1s forwards;
+  }
+  @keyframes flashAnim {
+    0% { opacity: 1; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  /* teks besar penanda pulang */
+  #pulangMsg {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 60px;
+    font-weight: bold;
+    color: red;
+    background: black;
+    padding: 20px 40px;
+    border-radius: 12px;
+    z-index: 10000;
+    display: none;
+  }
+
+  /* === LAYOUT UTAMA === */
+  body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+  }
+
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1500px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-top: 100px; /* avoid overlap with datetime */
+  }
+
+  .box {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+    margin: 0 10px;
+    box-sizing: border-box;
+    min-width: 250px;
+  }
+
+  .box h1 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    max-height: 345px;
+    overflow-y: auto;
+  }
+
+  .button {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #007bff;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    display: block;
+  }
+
+  .button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .datetime {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
+
+  .datetime .date {
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .time-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .time-box {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f1f1;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .separator {
+    font-size: 18px;
+    color: #333;
+  }
+
+  /* tombol logout dan download */
+  .logout-button,
+  .download-button,
+  .download-button-2 {
+    width: 30px;
+    height: 80px;
+    font-size: 14px;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    position: fixed;
+    top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .logout-button {
+    background-color: #dc3545;
+    right: 5px;
+  }
+  .logout-button:hover { background-color: #c82333; transform: translateY(-2px); }
+
+  .download-button {
+    background-color: #28a745;
+    right: 40px;
+  }
+  .download-button:hover { background-color: #218838; transform: translateY(-2px); }
+
+  .download-button-2 {
+    background-color: #007bff;
+    right: 75px;
+  }
+  .download-button-2:hover { background-color: #0056b3; transform: translateY(-2px); }
+
+            .search-container {
+        margin-bottom: 10px;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+   /* Responsive styles */
+      @media (max-width: 768px) {
+        .logout-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 5px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .download-button {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 40px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .download-button-2 {
+          width: 50px; /* Lebar yang sesuai untuk perangkat mobile */
+          height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
+          font-size: 14px; /* Ukuran font yang lebih kecil */
+          top: 5px; /* Jarak dari bawah untuk perangkat mobile */
+          right: 75px; /* Jarak dari kanan untuk perangkat mobile */
+          border-radius: 5px;
+          width: 30px;
+          height: 100px;
+        }
+
+        .box {
+          width: 100%;
+          max-width: none;
+          margin: 10px 0; /* Add vertical spacing between boxes */
+        }
+
+        .datetime {
+          height: auto; /* Sesuaikan tinggi berdasarkan konten */
+          padding: 20px; /* Padding yang lebih besar untuk perangkat mobile */
+        }
+      }
+</style>
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QE54JKZXNQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HW94FSQ24M');
+</script>
+    
+  </head>
+  <body>
+    <script>
+      localStorage.setItem("izinRapor", "ya");
+    </script>
+    <script>
+      // Define the access permissions for each page
+      const accessPermissions = {
+        "/2425_s1_sd.html": "2425_s1_sd",
+        "/2425_s1_smp.html": "2425_s1_smp",
+        "/2425_s1_sma.html": "2425_s1_sma",
+        "/2425_s1_tdu.html": "2425_s1_tdu",
+
+        "/2425_s2_sd.html": "2425_s2_sd",
+        "/2425_s2_smp.html": "2425_s2_smp",
+        "/2425_s2_sma.html": "2425_s2_sma",
+        "/2425_s2_tdu.html": "2425_s2_tdu",
+
+        "/2526_s1_sd.html": "2526_s1_sd",
+        "/2526_s1_smp.html": "2526_s1_smp",
+        "/2526_s1_sma.html": "2526_s1_sma",
+        "/2526_s1_tdu.html": "2526_s1_tdu",
+
+        "/2526_s2_sd.html": "2526_s2_sd",
+        "/2526_s2_smp.html": "2526_s2_smp",
+        "/2526_s2_sma.html": "2526_s2_sma",
+        "/2526_s2_tdu.html": "2526_s2_tdu",
+      };
+
+      // Get the current page URL and access granted
+      const currentPage = window.location.pathname;
+      const accessGranted = sessionStorage.getItem("accessGranted");
+
+      // Check if the current page is allowed for the granted access
+      if (accessGranted !== accessPermissions[currentPage]) {
+        window.location.href = "/"; // Redirect to login page
+      }
+    </script>
+
+<audio id="alarmSound" src="typing.mp3" preload="auto" loop></audio>
+<div id="flash"></div>
+<div id="pulangMsg" style="display:none;">⚠️ CRITICAL ALERT: END OF SESSION ⚠️</div>
+<div id="hackOverlay" style="display:none;"></div>
+
+
+    <div class="datetime" id="datetime">
+      <div class="date" id="date"></div>
+      <div class="time-container">
+        <div id="hour" class="time-box"></div>
+        <span class="separator">:</span>
+        <div id="minute" class="time-box"></div>
+        <span class="separator">:</span>
+        <div id="second" class="time-box"></div>
+        <button class="logout-button" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+        <button class="download-button" onclick="downloadDocument()" title="Panduan Gsheet Penilaian 2425">
+          <i class="fas fa-download"></i>
+        </button>
+        <button class="download-button-2" onclick="downloadDocument2()" title="Excel TDU">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- GSheet Penilaian Section -->
+      <div class="box">
+        <h1>GSheet Penilaian</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('penilaian', this.value)" />
+        </div>
+        <div class="button-container" id="penilaian">
+        <!--
+          <a href="https://docs.google.com/spreadsheets/d/1zHaiNAdZZ8gyTgmQOME3PVYmTzTd1K2_tzQIa7te6e4/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1egnspTiD22UgC-AWS4Zw8god0jUUe2wW77k7cICnKYM/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/151kJa2AvCbSaZpgu3rWsFrNyCpBNFCdmcO0EITmpBzI/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/11QsXLcZ-BQHNK91uZQ2uAcrQ62bkiEws25tdn-YnePI/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1P5gV6DWQkVdpx9LZYpvEiPuhehSMFJHfUIkIltin0ZY/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1XKiYjiN9ZZGKYb0E75Xc-gwztp-FPjGPZLkz6_xD4V4/edit?usp=sharing" class="button" target="_blank">BIOLOGI_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1_l5tDgg1iusxyzOS07F2a2yBLWOkRyZPotpQM1Wurzo/edit?usp=sharing" class="button" target="_blank">FISIKA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1gq7mpcoia4bqeC5apvarLt5Avr6CffRUxMtexiZVlZk/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1UqumliynDEunrrnUGEWrW3RBbuviEb40Jkk4GHqfcK8/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1naUBJpvgNArgUzGGSk3YpuuUPOcBS8_LC4tF2Ji8DjI/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1sAHtm0UdFJjNyxAHem0Q68c4WIlkIWWRrWC-NhCMfkE/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Xn2AkYoAzmqa6w0pv9CTXc57SHSyichkmFofcrodebs/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN PANCASILA_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/19wHPdOV1JybKQ9lGpxDj2POPNdCiCH_AUMMnZgJZf-8/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1iIMEN9TAkpFXlfHPyJ-i67rKUhtWibnDqxJAIG2VIH8/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1pgXM5f1W2vAvr7jgJqUMUmfn3JU42rM5jME_E-EtCgI/edit?usp=sharing" class="button" target="_blank">PROYEK BUDI DAYA SAWI HIJAU_7A_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1JBZ6PcNcnfx6ALRziF_ch-iEd7BopxVQ5smJ7JwSzdI/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/19KUvkZCCq67QGaiCTOqXWNT1y6A9g3QGCbuPE3QGB-4/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1os_dRspQQLYtQJYGe-FZxZcpFEYcs1ZumpULEPJXE5E/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1saUUqIvkitA8u1gG3Qa4r4BV2trS3jnw4httIRBA8U4/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1X3VhgSqC6mqi81P7j_PqffjnZ2cXWQotooWIGqdXmZg/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1i8wlibTHXCQme78ic8VnMnExZTdvtG_1rliDhP21FA4/edit?usp=sharing" class="button" target="_blank">BIOLOGI_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Vxl4zPPLrp9CxJquO1KSE5JYjR9EqmiJ3tzJf9CAijU/edit?usp=sharing" class="button" target="_blank">FISIKA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ibRNclt8FMX5wmS05VY1A6tE-q7SDJOpTiqEAVIclPk/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/13zo0XGkNxZMfvZ7rNBh_qyc88FvRS5EJeBjV7Q1tQrY/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1lbslsDJ7sx-85R1s00qG1uAOXqrU1y0tjmqyf8VKdKY/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1dvyain75jEj3d8bFc5UG4lcqkpILw2BZ1NQI6HgoKpo/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1y1gc5s3_hkveK-N16ER7iykkoecZgnf9jP1jRXzHJI4/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN PANCASILA_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1YewmGgiFUdqfcyS1X1zGyD-d_xVraJm48pMhXH4Pr_g/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1LG2wlzTnrpyxeuhAAc25qGBeG7H-CgPBGOgsatznXss/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1MrN31Sb-x-XuchlShBOASsbrdC9ogDRpgESmaSX2wVo/edit?usp=sharing" class="button" target="_blank">PROYEK BUDI DAYA UBI JALAR_8A_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1uXOPqUCjDEuivl6De2TfEHCQfwg5rMJ8LCiPo2g5G8I/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1vftD068VyZ34j-YQEnOy-rHa9jSHNyA8zhk_rDC47gU/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1KI8FD6qdQfBTKmPUW2P4HZ2MFuDLHNMYr_ezLcg1w0I/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1p_xAJ62w4ZqmgKuD4X44xN4khDNAFH4V64P64ctwQ2A/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FPwCP6cqzO2dy9Y0Jm1483B861gvpMEzgYkmPG6GP1U/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1CenBYXM-9B17ELYGlJxj-ZjlVmIFGHMJi9azZksuOrU/edit?usp=sharing" class="button" target="_blank">BIOLOGI_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1l45sTbstGP_jXqtmYVl66MzToPG60uOOyALuwXC-9jM/edit?usp=sharing" class="button" target="_blank">FISIKA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1HEmmUc-EQcs0iIviYkN86o_dF0gEXTIATxNVbrxj1Cs/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/18sAtJkkf9liNi-qZgo0Zflsl4Xoj8cNyxAZauL-FRZ4/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Ny42gHSxTyJmvAXUGdNndC10l2y2UxUFrNJodqCSdgU/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1uFzxd-ZnLFCc_ex9h997D_x5dq6YtZtnBb54IDYqSnQ/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1f6UgkqUtRQV2GGBJXNZs8k6nctwKPhFH_wJPqCBuPfc/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN PANCASILA_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/17UPbffVUNPpLs18rZ25PFMMAgmBzNBvYxf9sPMF_BiA/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ExV4noEp8EYCbSY6uh8n6UwlSDM4j978IOrtw8S-ZGs/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Nc5_wj3S2Mkub2U_sjX3fji3wt_VKIzRdl_AzAwywkI/edit?usp=sharing" class="button" target="_blank">PROYEK BUDI DAYA UBI JALAR_8B_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1M0I2czH6AT4YzvBOayfGW1nOgJ1mWBjWVA6CeBUPr38/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1zQL-QgqAU6GuhGO16Y2kfHN9NT2ihqkbpcZthwvI6-E/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1u8odnTVIXfHt7cHT_Dk-M4ctufe5QkgVwpA-fTcpF70/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1indATx1eizFM0aiLMp8e7xCZf6pzMRaFRRSLiRkgCTE/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1yUu_4K2CHlFvG2doiC7h7h0rQcTsVWMAPrl8xlgEHws/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/19SzJy4J5G2QzfNmDYDwmzhmHXe3LE_jJVvV7aSJGoYU/edit?usp=sharing" class="button" target="_blank">BIOLOGI_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/180BciOo8eJSycVypwS7EeLW1m0FvWtm_UOMSBl2j3eg/edit?usp=sharing" class="button" target="_blank">FISIKA_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/12UR_8UbRi04_eX5ePoRvFuDXK4Kk1SEanCy6PuTt9pg/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1jWxLOapYN9b5rh1KAPJ05XCBNRhE-UpYz3rGqI4OfxM/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1dxlcNF5pLnVbBrhShiQcSED8zEflqANek6AfGB2fqDY/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/178WHPURt5GJLEj9X369tDTWgYzEVx1ksm22yTryY758/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Bx33puvWaf5UyJaBx9V3I2gzCNJmv8yP9tyIN6CbVHs/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN PANCASILA_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1MjX8fVVkJt6Be3tGtiEVflgfrUktkR4TgcMZw6Y4pMc/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1mQt-6vN7IlMJLEg6mhsmyQxNTbZ6t0rS_i1PCrAQmRI/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1e8FXsbNTwA5w24DcUTfLde_Gljr9x7ZMndABzrswUcc/edit?usp=sharing" class="button" target="_blank">PROYEK ROBOTIK PERTANIAN_9A_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1Gfa2ylx549gSBn55Oz-a4a_pPjUba3Ftz0Ay-xi_VPs/edit?usp=sharing" class="button" target="_blank">AGAMA KATOLIK_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1JehrZJ2FgCx4xcn7GCgscJf9b_0FSrRzND05Mn4qAjk/edit?usp=sharing" class="button" target="_blank">AGAMA KRISTEN_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1GmPZki34WF9-eHh3p-1hFr5XAZIhUjGB-12rQj8gCeU/edit?usp=sharing" class="button" target="_blank">BAHASA INDONESIA_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/12lcpLwMB_ZXQFebwUwjyti5afbgnkUbvYJaAbyhPpGE/edit?usp=sharing" class="button" target="_blank">BAHASA INGGRIS_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Z1xXPTe9bmL0nFN7DVdwtsXuQWXhYgvoVKPsyr3LF9c/edit?usp=sharing" class="button" target="_blank">BAHASA SUNDA_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1-5QajqQQSeW5OaXnL_4qjSB_eWn8D4rccLSbkx7OnRM/edit?usp=sharing" class="button" target="_blank">BIOLOGI_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1cRDf-2rHwFKPz4biPz0Ry5EJEEOlB-uqIb9-LeV2Jrw/edit?usp=sharing" class="button" target="_blank">FISIKA_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/14ffqjhOxlGE2lSMQxXzRhVulLBEr_-ovJ5p_r_5sCrg/edit?usp=sharing" class="button" target="_blank">ILMU PENGETAHUAN SOSIAL_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/14K3LxSpl0_gclxKsQrNcqMeLvQdcB57sksV0fy951UE/edit?usp=sharing" class="button" target="_blank">INFORMATIKA_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1jePwfEkZrVRHWWye9A6HPswiVuDMl68SI3IGDhrMdDI/edit?usp=sharing" class="button" target="_blank">MATEMATIKA_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1eJHW6620LayujCs_UOPs5Z4r1KhUEMaBVqyOlygLouM/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN JASMANI, OLAHRAGA, DAN KESEHATAN_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/17fpPeAW_rBAY5GjPIce3mOz-IVT-A07WBgMkupma7mY/edit?usp=sharing" class="button" target="_blank">PENDIDIKAN PANCASILA_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1F1sv1ePMS086-s7accPr46KcJYK4gFBn71JgwY9xKec/edit?usp=sharing" class="button" target="_blank">PRAKARYA DAN KEWIRAUSAHAAN_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/123aNltVsuetUvdh82QdkIL2WLAvBc_T9ovJDQ28oX2E/edit?usp=sharing" class="button" target="_blank">SENI BUDAYA DAN KETERAMPILAN_9B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1CIUnW9onNNCrn2htgY-x0C2f6sN0uSO6IV2HoYJGXYk/edit?usp=sharing" class="button" target="_blank">PROYEK AUTOMASI PERTANIAN_9B_SMP</a>
+
+          <a href="https://docs.google.com/spreadsheets/d/1R8eukeYNpX4U0Z8vp0yPwOnbMl0qiHQUQshrAeYri7E/edit?usp=sharing" class="button" target="_blank">TIM AHLI PEMBIBITAN_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1ejHAJMN7nAAwHXruVnznKRzuig85f9TTUpYsFPV9s4s/edit?usp=sharing" class="button" target="_blank">TIM AHLI PENGOLAHAN LAHAN_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1SF4Bu53FZrnzKVFA0mzhTXSAHIMSs6FIsAkW29MGxYI/edit?usp=sharing" class="button" target="_blank">TIM AHLI PENANAMAN DAN PEMELIHARAAN_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1N1NAFXwLL8WHTs8WhSaH5OnY2bXjtvJdwCpxyykHGTU/edit?usp=sharing" class="button" target="_blank">TIM AHLI PENYAKIT DAN HAMA TANAMAN_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/10EMdgLrqahP9jC1KuTaaUWLmkMD62Aq5-cfebflaT18/edit?usp=sharing" class="button" target="_blank">TIM AHLI OPTIMALISASI PERTUMBUHAN_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/16lsDTy1rYoFeAwNbTomgNxylKsHwxgqbcurstZAlzeQ/edit?usp=sharing" class="button" target="_blank">TIM AHLI PANEN DAN PASCA PANEN_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1iaEHVJ5RaAgAFPX-9s2j1ceO6Ac9s9u1nqudIUtGPDI/edit?usp=sharing" class="button" target="_blank">TIM AHLI WASTE MANAGEMENT_SMP</a>
+
+          -->
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Absensi Section -->
+      <div class="box">
+        <h1>Absensi</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('absensi', this.value)" />
+        </div>
+        <div class="button-container" id="absensi">
+          <!--  
+          <a href="https://docs.google.com/spreadsheets/d/1QGjDMQcGv-wnKyIqNO4gI18MU62IRcwxJQ0xZPIun3c/edit?usp=sharing" class="button" target="_blank">7A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1_S21M2IZ0xUhZgqXKBZ5zrPLkuR5nVbTHLccrvkYcz8/edit?usp=sharing" class="button" target="_blank">8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1s1qynYQChLqF-yn5n1JbcbjTQRbc57EYzlncW-plnqM/edit?usp=sharing" class="button" target="_blank">8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1TDRjLP2Wzm_C4uqCQkFbj4C-iwMrXPy_0SadU0v4zcQ/edit?usp=sharing" class="button" target="_blank">9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1vKDwgRfp63fuzRFHuUoogEEFNu2XXHSmsXM69UGc3hQ/edit?usp=sharing" class="button" target="_blank">9B_SMP</a>
+          -->
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Ledger Section -->
+      <div class="box">
+        <h1>Ledger</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('ledger', this.value)" />
+        </div>
+        <div class="button-container" id="ledger">
+        <!--
+          <a href="2526_s1_mlsmp.html" class="button" target="_blank">ML_Predik_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1rkQbARCPP8DU0Gxt64od6TdGyrzYHelafY0UTkwoIN0/edit?usp=sharing.html" class="button" target="_blank">ALL_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1FhbsOpUycc3nttSnI9gS1xyJqAXF6Oylf6PvFXB_7OQ/edit?usp=sharing" class="button" target="_blank">LEDGER_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1aQJIgNZh8G4Z765Zgg5eaLMOGpth3T9cCNiENtoa5LE/edit?usp=sharing" class="button" target="_blank">LEDGER TIM AHLI_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1GYwZe6E2KSW1dK4lx-rqNA-tMwX1z83qS5gfx9KWiUA/edit?usp=sharing" class="button" target="_blank">8A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1Z-0RTnvYnu0yPZKhglvCgiwcwedJKydOmia4jQ64iHU/edit?usp=sharing" class="button" target="_blank">8B_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1K0TMFxj_OlslbK-WS_dx8Vv9aJdTpoR-Ou85tj48pN4/edit?usp=sharing" class="button" target="_blank">9A_SMP</a>
+          <a href="https://docs.google.com/spreadsheets/d/1G9lbaX_k3rdg9k06u1sx1kfLTzwbPqB2Q5U1YWg3tw4/edit?usp=sharing" class="button" target="_blank">9B_SMP</a>
+          <a href="https://drive.google.com/drive/folders/1r4R0ZdlGMvQOqQO06LHyJbS5j6TaxKbU?usp=sharing" class="button" target="_blank">RAPOR_SMP</a>
+          -->
+          <!-- Add more links as needed -->
+        </div>
+      </div>
+
+      <!-- Data Master Section -->
+      <div class="box">
+        <h1>Data Master</h1>
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search..." oninput="filterButtons('dataMaster', this.value)" />
+        </div>
+        <div class="button-container" id="dataMaster">
+        <!--
+            <a href="https://docs.google.com/spreadsheets/d/1-AgkE4_DFzwEtaNAeM-BeECpd1ojI5Z2nmVRGK0SkJM/edit?usp=sharing" class="button" target="_blank">MASTER_SMP</a>
+          -->
+            <!-- Add more links as needed -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+  function updateDateTime() {
+    const now = new Date();
+    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const day = now.getDate();
+    const year = now.getFullYear();
+    const hour = String(now.getHours()).padStart(2, "0");
+    const minute = String(now.getMinutes()).padStart(2, "0");
+    const second = String(now.getSeconds()).padStart(2, "0");
+
+    document.getElementById("date").textContent = `${dayName}, ${day} ${monthName} ${year}`;
+    document.getElementById("hour").textContent = hour;
+    document.getElementById("minute").textContent = minute;
+    document.getElementById("second").textContent = second;
+
+    // Cek jam 08:35:00 Senin–Jumat
+    if (
+      now.getHours() === 16 &&
+      now.getMinutes() === 0 &&
+      now.getSeconds() === 0 &&
+      now.getDay() >= 1 &&
+      now.getDay() <= 5
+    ) {
+      triggerPulang();
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem("accessGranted"); // Clear the access flag
+    window.location.href = "/"; // Redirect to the base URL
+  }
+
+  function filterButtons(containerId, searchTerm) {
+    const container = document.getElementById(containerId);
+    const buttons = container.getElementsByClassName("button");
+    for (let button of buttons) {
+      if (button.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+        button.style.display = "block";
+      } else {
+        button.style.display = "none";
+      }
+    }
+  }
+
+  // Disable right-click context menu
+  document.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "u") {
+      event.preventDefault();
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    // Prevent Ctrl+Shift+I (DevTools), Ctrl+Shift+J (DevTools), Ctrl+U (View Page Source)
+    if (event.ctrlKey && event.shiftKey && event.key === "I") {
+      event.preventDefault();
+    }
+
+    // Prevent F12 (DevTools)
+    if (event.key === "F12") {
+      event.preventDefault();
+    }
+  });
+
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+
+  function downloadDocument() {
+    const link = document.createElement("a");
+    link.href = "GSHEET PENILAIAN 2425.pdf"; // Path to the PDF file
+    link.download = "GSHEET PENILAIAN 2425.pdf"; // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function downloadDocument2() {
+    const link = document.createElement("a");
+    link.href = "TDU_SMP_2526_S1.xlsx"; // Path to the Excel file
+    link.download = "TDU_SMP_2526_S1.xlsx"; // File name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.ctrlKey && event.key === "s") {
+      event.preventDefault();
+    }
+  });
+
+  // ========================
+  // Efek Hacker Pulang
+  // ========================
+  function triggerPulang() {
+    const alarm = document.getElementById("alarmSound");
+    const flash = document.getElementById("flash");
+    const pulangMsg = document.getElementById("pulangMsg");
+    const overlay = document.getElementById("hackOverlay");
+
+    // Bunyi typing loop
+    alarm.currentTime = 0;
+    alarm.play();
+
+    // Flash layar
+    flash.classList.add("flash-show");
+
+    // Overlay hacking
+    overlay.style.display = "flex";
+    overlay.style.position = "fixed";
+    overlay.style.top = 0;
+    overlay.style.left = 0;
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0,0,0,0.95)";
+    overlay.style.color = "lime";
+    overlay.style.fontFamily = "monospace";
+    overlay.style.fontSize = "28px";
+    overlay.style.padding = "40px";
+    overlay.style.zIndex = 9999;
+    overlay.innerHTML = "";
+
+const messages = [
+  "[INITIATING SYSTEM SCAN...]",
+  "[ACCESS DENIED...]",
+  "[RETRYING BYPASS...]",
+  "[AUTHORIZATION OVERRIDDEN]",
+  "[FIREWALL BREACHED...]",
+  "[DOWNLOADING SENSITIVE DATA...]",
+  "[INJECTING PAYLOAD...]",
+  "[OVERRIDING SECURITY PROTOCOLS...]",
+  "[SYSTEM BREACHED SUCCESSFULLY]",
+  "[ENCRYPTION DISABLED]",
+  "[FORCING SHUTDOWN...]",
+  "[LOADING PAYLOAD... █▒▒▒▒▒▒▒▒▒]",
+  "[LOADING PAYLOAD... ███▒▒▒▒▒▒▒]",
+  "[LOADING PAYLOAD... █████▒▒▒▒▒]",
+  "[LOADING PAYLOAD... ███████▒▒▒]",
+  "[LOADING PAYLOAD... ██████████]",
+  "[ACCESS LOGS DELETED]",
+  "[SESSION TERMINATED]",
+];
+
+
+    let msgIndex = 0;
+    let charIndex = 0;
+
+    function typeEffect() {
+      if (msgIndex < messages.length) {
+        if (charIndex < messages[msgIndex].length) {
+          // kadang huruf random muncul
+          let randomChar =
+            Math.random() > 0.8
+              ? String.fromCharCode(33 + Math.floor(Math.random() * 94))
+              : messages[msgIndex][charIndex];
+          overlay.innerHTML += randomChar;
+          charIndex++;
+          setTimeout(typeEffect, 80);
+        } else {
+          overlay.innerHTML += "<br/>";
+          msgIndex++;
+          charIndex = 0;
+          setTimeout(typeEffect, 500);
+        }
+      } else {
+        // selesai → kembali normal
+        setTimeout(() => {
+          overlay.style.display = "none";
+          flash.classList.remove("flash-show");
+          pulangMsg.style.display = "block";
+
+          // stop suara
+          alarm.pause();
+          alarm.currentTime = 0;
+
+          setTimeout(() => {
+            pulangMsg.style.display = "none";
+          }, 2500);
+        }, 2000);
+      }
+    }
+
+    typeEffect();
+  }
+</script>
+
+
+  </body>
+</html>
