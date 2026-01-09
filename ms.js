@@ -101,7 +101,7 @@ const codes = {
   "2526_s2_klsd10": "coming",
   "2526_s2_klsmp29": "2526_s2_smp",
   "2526_s2_klsma38": "2526_s2_sma",
-  "2526_s2_kltdu47": "coming",
+  "2526_s2_kltdu47": "2526_s2_tdu",
 };
 
 const cod = {
@@ -110,6 +110,7 @@ const cod = {
   klsma33: "sma",
   kltdu44: "tdu",
 };
+
 
 
 
