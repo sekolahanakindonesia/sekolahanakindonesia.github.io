@@ -203,28 +203,68 @@
   }
 
   /* tombol logout dan download */
-  .logout-button,
-  .download-button,
-  .download-button-2 {
-    width: 30px;
-    height: 80px;
-    font-size: 14px;
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    position: fixed;
-    top: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  .logout-button {
-    background-color: #dc3545;
-    right: 5px;
-  }
+.logout-button {
+        width: 30px;
+        height: 80px;
+        font-size: 14px;
+        color: #ffffff;
+        border: none;
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 25px;
+        cursor: pointer;
+        transition:
+          background-color 0.3s,
+          transform 0.2s;
+        position: fixed;
+        top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+            .download-button {
+        width: 30px;
+        height: 80px;
+        font-size: 14px;
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        transition:
+          background-color 0.3s,
+          transform 0.2s;
+        position: fixed;
+        top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+            .download-button-2 {
+        width: 30px;
+        height: 80px;
+        font-size: 14px;
+        color: #ffffff;
+        border: none;
+        border-top-left-radius: 25px;
+        border-bottom-left-radius: 25px;
+        cursor: pointer;
+        transition:
+          background-color 0.3s,
+          transform 0.2s;
+        position: fixed;
+        top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      
+      .logout-button {
+        background-color: #dc3545;
+        right: 8px;
+      }
   .logout-button:hover { background-color: #c82333; transform: translateY(-2px); }
 
   .download-button {
@@ -233,10 +273,10 @@
   }
   .download-button:hover { background-color: #218838; transform: translateY(-2px); }
 
-  .download-button-2 {
-    background-color: #007bff;
-    right: 75px;
-  }
+      .download-button-2 {
+        background-color: #007bff;
+        right: 72px;
+      }
   .download-button-2:hover { background-color: #0056b3; transform: translateY(-2px); }
 
             .search-container {
@@ -259,8 +299,9 @@
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
           top: 5px; /* Jarak dari bawah untuk perangkat mobile */
-          right: 5px; /* Jarak dari kanan untuk perangkat mobile */
-          border-radius: 5px;
+          right: 8px; /* Jarak dari kanan untuk perangkat mobile */
+          border-top-right-radius: 25px;
+          border-bottom-right-radius: 25px;
           width: 30px;
           height: 100px;
         }
@@ -270,8 +311,6 @@
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
           top: 5px; /* Jarak dari bawah untuk perangkat mobile */
-          right: 40px; /* Jarak dari kanan untuk perangkat mobile */
-          border-radius: 5px;
           width: 30px;
           height: 100px;
         }
@@ -281,8 +320,9 @@
           height: 50px; /* Tinggi yang sesuai untuk perangkat mobile */
           font-size: 14px; /* Ukuran font yang lebih kecil */
           top: 5px; /* Jarak dari bawah untuk perangkat mobile */
-          right: 75px; /* Jarak dari kanan untuk perangkat mobile */
-          border-radius: 5px;
+          right: 72px; /* Jarak dari kanan untuk perangkat mobile */
+          border-top-left-radius: 25px;
+          border-bottom-left-radius: 25px;
           width: 30px;
           height: 100px;
         }
