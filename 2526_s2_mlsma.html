@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KuLi-ML-SMA</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    select, table, button {
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 1000px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    td:first-child, th:first-child,
+    td:nth-child(2), th:nth-child(2), 
+    td:nth-child(3), th:nth-child(3) {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background-color: #fff;
+      box-shadow: 2px 0 2px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+
+    th.stnkm-a {
+      background-color: #e7f3fe;
+    }
+
+    th.stnkm-b {
+      background-color: #ffffffff;
+    }
+
+    .text-left {
+      text-align: left !important;
+    }
+
+    .red-bold {
+      color: red;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      label, select, button {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      h2 {
+        font-size: 1.4em;
+      }
+
+      select, button {
+        margin-top: 5px;
+        margin-bottom: 15px;
+      }
+    }
+  </style>
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QE54JKZXNQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CH0B6LDCJT');
+</script>
+
+</head>
+<body>
+<script>
+  if (localStorage.getItem("izinRapor") !== "ya") {
+    alert("Akses ditolak. Silakan buka halaman KuLi unit.");
+    window.location.href = "https://sekolahanakindonesia.github.io/2526_s2_sma.html";
+  } else {
+    localStorage.removeItem("izinRapor");
+  }
+</script>
+
+  <div id="loadingInfo" style="display:none; font-weight:bold; color:blue;">⏳ Memuat data, harap tunggu...</div>
+
+  <h2>Prediksi Nilai Rapor SMA - ML</h2>
+
+  <label for="kelasFilter">Pilih Kelas:</label>
+  <select id="kelasFilter">
+    <option value="">-- Semua Kelas --</option>
+  </select>
+
+  <label for="mapelFilter">Pilih Mapel:</label>
+  <select id="mapelFilter" disabled>
+    <option value="">-- Semua Mapel --</option>
+  </select>
+
+  <label for="materiFilter">Pilih Materi:</label>
+  <select id="materiFilter" disabled>
+    <option value="">-- Semua Materi --</option>
+  </select>
+
+  <button id="refreshBtn">🔄 Refresh Data</button>
+
+  <table id="tabelLaporan">
+    <thead>
+      <tr id="headerRow"></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const SHEET_URL = 'https://opensheet.elk.sh/1FQWdwnGFCySob409nk0-XOd2HA5k16V97rz10rMSTGo/Sheet1';
+    let dataMentah = [];
+
+    function getKategoriList(isRaporMode) {
+      return isRaporMode ? ['skill', 'teori', 'nalar'] : ['skill', 'teori', 'nalar', 'karakter', 'minat'];
+    }
+
+    function capitalize(text) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    function rataRataValid(arr) {
+      const valid = arr.filter(v => v > 0); // hanya nilai > 0
+      return valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : 0;
+    }
+
+async function fetchData() {
+  $("#loadingInfo").show(); // 🔹 Tampilkan info memuat data
+  const res = await fetch(SHEET_URL);
+  const data = await res.json();
+  dataMentah = data;
+  inisialisasiFilter(data);
+  renderTabel();
+  $("#loadingInfo").hide(); // 🔹 Sembunyikan setelah selesai
+}
+
+
+    function inisialisasiFilter(data) {
+      const kelasSet = new Set();
+      data.forEach(row => kelasSet.add(row['KELAS']));
+      const kelasDipilih = $('#kelasFilter').val();
+      $("#kelasFilter").html('<option value="">-- Semua Kelas --</option>' + [...kelasSet].sort().map(k => `<option value="${k}" ${k === kelasDipilih ? 'selected' : ''}>${k}</option>`).join(''));
+    }
+
+    $('#kelasFilter').on('change', function () {
+      const kelasDipilih = $(this).val();
+      const mapelSet = new Set();
+      $('#mapelFilter').html('<option value="">-- Semua Mapel --</option>');
+      $('#materiFilter').html('<option value="">-- Semua Materi --</option>');
+      $('#mapelFilter, #materiFilter').prop('disabled', !kelasDipilih);
+
+      if (kelasDipilih) {
+        dataMentah.filter(row => row['KELAS'] === kelasDipilih).forEach(row => mapelSet.add(row['MAPEL']));
+        const mapelDipilih = $('#mapelFilter').val();
+        $("#mapelFilter").append([...mapelSet].sort().map(m => `<option value="${m}" ${m === mapelDipilih ? 'selected' : ''}>${m}</option>`));
+      }
+      renderTabel();
+    });
+
+    $('#mapelFilter').on('change', function () {
+      const kelas = $('#kelasFilter').val();
+      const mapel = $(this).val();
+      const materiSet = new Set();
+      $('#materiFilter').html('<option value="">-- Semua Materi --</option>');
+      $('#materiFilter').prop('disabled', !mapel);
+
+      if (mapel) {
+        dataMentah.filter(row => row['KELAS'] === kelas && row['MAPEL'] === mapel).forEach(row => materiSet.add(row['KETERANGAN MATERI']));
+        const materiDipilih = $('#materiFilter').val();
+        $("#materiFilter").append([...materiSet].sort().map(m => `<option value="${m}" ${m === materiDipilih ? 'selected' : ''}>${m}</option>`));
+      }
+      renderTabel();
+    });
+
+    $('#materiFilter').on('change', function () {
+      renderTabel();
+    });
+
+    $('#refreshBtn').on('click', function () {
+      fetchData();
+    });
+
+    function nilaiAkhir(real, remedial, pengayaan, kkm) {
+      real = parseFloat(real);
+      remedial = parseFloat(remedial);
+      pengayaan = parseFloat(pengayaan);
+      kkm = parseFloat(kkm);
+
+      const validReal = real > 0;
+      const validRemedial = remedial > 0;
+      const validPengayaan = pengayaan > 0;
+
+      if (!validReal && !validRemedial && !validPengayaan) return 0;
+      if (!validReal) return 0;
+
+      if (real <= kkm) {
+        if (validRemedial && remedial < kkm && remedial > real) return remedial;
+        return real >= remedial ? real : kkm;
+      } else {
+        return validPengayaan && pengayaan > real ? pengayaan : real;
+      }
+    }
+
+    function renderTabel() {
+      const kelas = $('#kelasFilter').val();
+      const mapel = $('#mapelFilter').val();
+      const materi = $('#materiFilter').val();
+      const tbody = $('#tabelLaporan tbody');
+      const header = $('#headerRow');
+      tbody.empty();
+      header.empty();
+
+      const isRaporMode = kelas && mapel && !materi;
+      const kategoriList = getKategoriList(isRaporMode);
+
+      if (isRaporMode) {
+        header.append('<th>No</th><th>NIS</th><th class="text-left">Nama</th><th>Kelas</th><th>KKM</th><th class="text-left">Mapel</th><th>Nilai Rapor</th>');
+      } else {
+        header.append(`<th>No</th><th>NIS</th><th class="text-left">Nama</th><th>Kelas</th><th>KKM</th><th class="text-left">Mapel</th><th class="text-left">Materi</th>`);
+        kategoriList.forEach((kategori, i) => {
+          const groupClass = i % 2 === 0 ? 'stnkm-a' : 'stnkm-b';
+          header.append(`<th class="${groupClass}">Real ${capitalize(kategori)}</th>`);
+          header.append(`<th class="${groupClass}">Remedial ${capitalize(kategori)}</th>`);
+          header.append(`<th class="${groupClass}">Pengayaan ${capitalize(kategori)}</th>`);
+          header.append(`<th class="${groupClass}">Nilai Akhir ${capitalize(kategori)}</th>`);
+        });
+      }
+
+      const siswaMap = {};
+      dataMentah.forEach(row => {
+        if ((kelas && row['KELAS'] !== kelas) || (mapel && row['MAPEL'] !== mapel)) return;
+        if (materi && row['KETERANGAN MATERI'] !== materi) return;
+
+        const nis = row['NIS'], nama = row['NAMA'], kkm = parseFloat(row['KKM']) || 0;
+        const kategori = (row['KATEGORI PENILAIAN'] || '').toLowerCase();
+        const tipe = (row['TIPE PENILAIAN'] || '').toLowerCase();
+        const nilai = parseFloat(row['NILAI']) || 0;
+        const tp = row['NO TP'];
+        const key = `${nis}|${row['MAPEL']}`;
+        if (!kategoriList.includes(kategori)) return;
+        if (!siswaMap[key]) siswaMap[key] = { nama, kelas: row['KELAS'], kkm, mapel: row['MAPEL'], nilaiTP: {}, nilaiMateri: {} };
+
+        if (isRaporMode && tp) {
+          if (!siswaMap[key].nilaiTP[tp]) siswaMap[key].nilaiTP[tp] = {};
+          if (!siswaMap[key].nilaiTP[tp][kategori]) siswaMap[key].nilaiTP[tp][kategori] = { real: [], remedial: [], pengayaan: [] };
+          siswaMap[key].nilaiTP[tp][kategori][tipe].push(nilai);
+        } else {
+          const materiKey = row['KETERANGAN MATERI'];
+          if (!siswaMap[key].nilaiMateri[materiKey]) siswaMap[key].nilaiMateri[materiKey] = {};
+          if (!siswaMap[key].nilaiMateri[materiKey][kategori]) siswaMap[key].nilaiMateri[materiKey][kategori] = { real: [], remedial: [], pengayaan: [] };
+          siswaMap[key].nilaiMateri[materiKey][kategori][tipe].push(nilai);
+        }
+      });
+
+      let no = 1;
+      for (const key in siswaMap) {
+        const { nama, kelas, kkm, mapel, nilaiTP, nilaiMateri } = siswaMap[key];
+        if (isRaporMode) {
+          const nilaiPerKategori = {};
+          kategoriList.forEach(k => nilaiPerKategori[k] = []);
+          for (const tp in nilaiTP) {
+            for (const kategori of kategoriList) {
+              const data = nilaiTP[tp][kategori];
+              if (!data) continue;
+              const r = rataRataValid(data.real);
+              const m = rataRataValid(data.remedial);
+              const p = rataRataValid(data.pengayaan);
+              const hasil = nilaiAkhir(r, m, p, kkm);
+              if (hasil > 0) nilaiPerKategori[kategori].push(hasil);
+            }
+          }
+          const nilaiRapor = kategoriList.map(k => rataRataValid(nilaiPerKategori[k]));
+          const raporFinal = nilaiRapor.filter(v => v > 0).length 
+              ? Math.round(nilaiRapor.reduce((a,b)=>a+b,0) / nilaiRapor.filter(v => v>0).length) 
+              : 0;
+          const raporClass = parseFloat(raporFinal) < kkm ? 'red-bold' : '';
+          tbody.append(`<tr>
+            <td>${no++}</td>
+            <td>${key.split('|')[0]}</td>
+            <td class="text-left">${nama}</td>
+            <td>${kelas}</td>
+            <td>${kkm}</td>
+            <td class="text-left">${mapel}</td>
+            <td class="${raporClass}">${raporFinal}</td>
+          </tr>`);
+
+        } else {
+          for (const materi in nilaiMateri) {
+            if ($('#materiFilter').val() && materi !== $('#materiFilter').val()) continue;
+            const rowNilai = [];
+            for (const kategori of kategoriList) {
+              const d = nilaiMateri[materi][kategori] || { real: [], remedial: [], pengayaan: [] };
+              const r = Math.round(rataRataValid(d.real));
+              const m = Math.round(rataRataValid(d.remedial));
+              const p = Math.round(rataRataValid(d.pengayaan));
+              const hasilAkhir = Math.round(nilaiAkhir(r, m, p, kkm));
+
+              const rClass = parseFloat(r) < kkm ? 'red-bold' : '';
+              const mClass = parseFloat(m) < kkm ? 'red-bold' : '';
+              const pClass = parseFloat(p) < kkm ? 'red-bold' : '';
+              const hasilClass = hasilAkhir < kkm ? 'red-bold' : '';
+
+              rowNilai.push(
+                `<td class="${rClass}">${r}</td>` +
+                `<td class="${mClass}">${m}</td>` +
+                `<td class="${pClass}">${p}</td>` +
+                `<td class="${hasilClass}">${hasilAkhir}</td>`
+              );
+            }
+            tbody.append(`<tr><td>${no++}</td><td>${key.split('|')[0]}</td><td class="text-left">${nama}</td><td>${kelas}</td><td>${kkm}</td><td class="text-left">${mapel}</td><td class="text-left">${materi}</td>${rowNilai.join('')}</tr>`);
+          }
+        }
+      }
+    }
+
+    fetchData();
+
+    // Disable right-click context menu
+    document.addEventListener("contextmenu", function (event) {
+      event.preventDefault();
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.key === "u") {
+        event.preventDefault();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.ctrlKey && event.shiftKey && event.key === "I") {
+        event.preventDefault();
+      }
+      if (event.key === "F12") {
+        event.preventDefault();
+      }
+    }); 
+  </script>
+</body>
+</html>
+
